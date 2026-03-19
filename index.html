@@ -152,6 +152,230 @@
   .geo-btn-inline:disabled { opacity: 0.5; cursor: not-allowed; }
   .geo-btn-inline.loading { animation: geo-pulse 1s infinite; }
   @keyframes geo-pulse { 0%,100% { opacity: 0.6; } 50% { opacity: 1; } }
+
+  /* ========== SPLASH PAGE ========== */
+  .splash { min-height: 100vh; background: #0F0B2E; color: white; overflow-x: hidden; position: relative; }
+  .splash * { box-sizing: border-box; }
+
+  .splash-bg-grid {
+    position: fixed; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(79,70,229,0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,70,229,0.07) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridDrift 20s linear infinite;
+  }
+  @keyframes gridDrift { from { transform: translate(0,0); } to { transform: translate(60px,60px); } }
+
+  .splash-glow-1 { position: fixed; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(79,70,229,0.3), transparent 70%); top: -200px; right: -100px; z-index: 0; animation: glowFloat1 8s ease-in-out infinite; }
+  .splash-glow-2 { position: fixed; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(124,58,237,0.25), transparent 70%); bottom: -150px; left: -100px; z-index: 0; animation: glowFloat2 10s ease-in-out infinite; }
+  .splash-glow-3 { position: fixed; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(245,158,11,0.15), transparent 70%); top: 40%; left: 50%; z-index: 0; animation: glowFloat3 12s ease-in-out infinite; }
+  @keyframes glowFloat1 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-40px,30px); } }
+  @keyframes glowFloat2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(30px,-40px); } }
+  @keyframes glowFloat3 { 0%,100% { transform: translate(-50%,-50%) scale(1); } 50% { transform: translate(-50%,-50%) scale(1.2); } }
+
+  .splash-nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 40px;
+    background: rgba(15,11,46,0.6); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(79,70,229,0.15);
+    animation: fadeSlideDown 0.8s ease-out;
+  }
+  @keyframes fadeSlideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+  .splash-logo { display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+  .splash-logo .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); display: inline-block; animation: dotPulse 2s ease-in-out infinite; }
+  @keyframes dotPulse { 0%,100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(245,158,11,0.4); } 50% { transform: scale(1.2); box-shadow: 0 0 0 8px rgba(245,158,11,0); } }
+  .splash-nav-links { display: flex; align-items: center; gap: 24px; }
+  .splash-nav-links a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; cursor: pointer; }
+  .splash-nav-links a:hover { color: white; }
+  .splash-nav-cta {
+    padding: 10px 24px; border-radius: 10px; border: none;
+    background: linear-gradient(135deg, var(--primary), #7C3AED);
+    color: white; font-size: 14px; font-weight: 700; cursor: pointer;
+    transition: all 0.3s; box-shadow: 0 4px 15px rgba(79,70,229,0.4);
+  }
+  .splash-nav-cta:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(79,70,229,0.6); }
+
+  .splash-hero {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 160px 24px 80px; max-width: 900px; margin: 0 auto;
+  }
+  .splash-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 18px; border-radius: 30px;
+    background: rgba(79,70,229,0.15); border: 1px solid rgba(79,70,229,0.3);
+    font-size: 13px; font-weight: 600; color: var(--primary-light); margin-bottom: 28px;
+    animation: fadeSlideUp 0.8s ease-out 0.2s both;
+  }
+  .splash-pill .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #10B981; animation: dotPulse 2s infinite; }
+
+  @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+  .splash-hero h1 {
+    font-size: clamp(40px, 7vw, 72px); font-weight: 900; letter-spacing: -2px;
+    line-height: 1.05; margin-bottom: 24px;
+    background: linear-gradient(135deg, #ffffff 0%, #c7d2fe 50%, var(--primary-light) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    animation: fadeSlideUp 0.8s ease-out 0.4s both;
+  }
+  .splash-hero p {
+    font-size: clamp(16px, 2.2vw, 20px); color: rgba(255,255,255,0.6); line-height: 1.7;
+    max-width: 600px; margin-bottom: 40px;
+    animation: fadeSlideUp 0.8s ease-out 0.6s both;
+  }
+  .splash-cta-group {
+    display: flex; gap: 16px; align-items: center; flex-wrap: wrap; justify-content: center;
+    animation: fadeSlideUp 0.8s ease-out 0.8s both;
+  }
+  .splash-btn-main {
+    padding: 16px 36px; border-radius: 14px; border: none;
+    background: linear-gradient(135deg, var(--primary), #7C3AED);
+    color: white; font-size: 17px; font-weight: 700; cursor: pointer;
+    transition: all 0.3s; box-shadow: 0 8px 30px rgba(79,70,229,0.5);
+    position: relative; overflow: hidden;
+  }
+  .splash-btn-main::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.15) 50%, transparent 60%);
+    transform: translateX(-100%); transition: none;
+  }
+  .splash-btn-main:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(79,70,229,0.6); }
+  .splash-btn-main:hover::after { transform: translateX(100%); transition: transform 0.6s ease; }
+
+  .splash-btn-sec {
+    padding: 16px 32px; border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05);
+    color: white; font-size: 16px; font-weight: 600; cursor: pointer;
+    transition: all 0.3s; backdrop-filter: blur(10px);
+  }
+  .splash-btn-sec:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); transform: translateY(-2px); }
+
+  .splash-social-proof {
+    display: flex; align-items: center; gap: 12px; margin-top: 48px;
+    animation: fadeSlideUp 0.8s ease-out 1s both;
+  }
+  .splash-avatars { display: flex; }
+  .splash-avatars span {
+    width: 36px; height: 36px; border-radius: 50%; border: 2px solid #0F0B2E;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; margin-left: -10px;
+    background: linear-gradient(135deg, var(--primary), #7C3AED);
+  }
+  .splash-avatars span:first-child { margin-left: 0; }
+  .splash-social-text { font-size: 14px; color: rgba(255,255,255,0.5); }
+  .splash-social-text strong { color: rgba(255,255,255,0.85); }
+
+  /* Floating illustration cards */
+  .splash-float-card {
+    position: absolute; z-index: 2; border-radius: 16px; padding: 16px 20px;
+    background: rgba(255,255,255,0.06); backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3); font-size: 13px; color: rgba(255,255,255,0.8);
+    animation: cardFloat 6s ease-in-out infinite;
+    pointer-events: none;
+  }
+  .splash-float-card.card-1 { top: 28%; left: 5%; animation-delay: 0s; }
+  .splash-float-card.card-2 { top: 35%; right: 4%; animation-delay: 2s; }
+  .splash-float-card.card-3 { bottom: 15%; left: 8%; animation-delay: 4s; }
+  @keyframes cardFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+
+  .splash-float-card .fc-icon { font-size: 24px; margin-bottom: 6px; }
+  .splash-float-card .fc-label { font-weight: 700; font-size: 14px; margin-bottom: 2px; color: white; }
+  .splash-float-card .fc-sub { font-size: 12px; color: rgba(255,255,255,0.5); }
+
+  /* Features section */
+  .splash-section {
+    position: relative; z-index: 1;
+    padding: 100px 24px; max-width: 1100px; margin: 0 auto;
+  }
+  .splash-section-label {
+    text-align: center; text-transform: uppercase; font-size: 13px; font-weight: 700;
+    color: var(--primary-light); letter-spacing: 3px; margin-bottom: 12px;
+  }
+  .splash-section h2 {
+    text-align: center; font-size: clamp(28px, 4vw, 44px); font-weight: 800;
+    letter-spacing: -1px; margin-bottom: 16px; color: white;
+  }
+  .splash-section .section-sub {
+    text-align: center; font-size: 16px; color: rgba(255,255,255,0.5);
+    max-width: 550px; margin: 0 auto 60px;
+  }
+
+  .splash-features {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+  }
+  .splash-feature {
+    border-radius: 20px; padding: 32px 28px;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    transition: all 0.4s; position: relative; overflow: hidden;
+  }
+  .splash-feature::before {
+    content: ''; position: absolute; inset: 0; border-radius: 20px;
+    background: linear-gradient(135deg, rgba(79,70,229,0.1), transparent);
+    opacity: 0; transition: opacity 0.4s;
+  }
+  .splash-feature:hover { border-color: rgba(79,70,229,0.3); transform: translateY(-4px); }
+  .splash-feature:hover::before { opacity: 1; }
+  .splash-feature .feat-icon {
+    width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center;
+    font-size: 28px; margin-bottom: 20px;
+    background: linear-gradient(135deg, rgba(79,70,229,0.2), rgba(124,58,237,0.2));
+    border: 1px solid rgba(79,70,229,0.2);
+  }
+  .splash-feature h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; color: white; }
+  .splash-feature p { font-size: 14px; line-height: 1.7; color: rgba(255,255,255,0.5); }
+
+  /* How it works */
+  .splash-steps {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; position: relative;
+  }
+  .splash-steps::before {
+    content: ''; position: absolute; top: 40px; left: 12.5%; right: 12.5%; height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(79,70,229,0.3), rgba(124,58,237,0.3), transparent);
+  }
+  .splash-step { text-align: center; position: relative; }
+  .splash-step .step-num {
+    width: 56px; height: 56px; border-radius: 50%; margin: 0 auto 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 800;
+    background: linear-gradient(135deg, var(--primary), #7C3AED);
+    box-shadow: 0 4px 20px rgba(79,70,229,0.4);
+    position: relative; z-index: 1;
+  }
+  .splash-step .step-emoji { font-size: 36px; margin-bottom: 12px; }
+  .splash-step h4 { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: white; }
+  .splash-step p { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.6; }
+
+  /* CTA Banner */
+  .splash-cta-banner {
+    position: relative; z-index: 1; padding: 80px 24px; text-align: center;
+  }
+  .splash-cta-inner {
+    max-width: 700px; margin: 0 auto; padding: 60px 40px; border-radius: 24px;
+    background: linear-gradient(135deg, rgba(79,70,229,0.15), rgba(124,58,237,0.15));
+    border: 1px solid rgba(79,70,229,0.2);
+    backdrop-filter: blur(20px);
+  }
+  .splash-cta-inner h2 { font-size: clamp(24px, 4vw, 36px); font-weight: 800; margin-bottom: 12px; color: white; }
+  .splash-cta-inner p { font-size: 16px; color: rgba(255,255,255,0.5); margin-bottom: 32px; }
+
+  .splash-footer {
+    position: relative; z-index: 1;
+    text-align: center; padding: 40px 24px; border-top: 1px solid rgba(255,255,255,0.06);
+    font-size: 13px; color: rgba(255,255,255,0.3);
+  }
+
+  @media (max-width: 768px) {
+    .splash-features { grid-template-columns: 1fr; }
+    .splash-steps { grid-template-columns: repeat(2, 1fr); }
+    .splash-steps::before { display: none; }
+    .splash-nav { padding: 16px 20px; }
+    .splash-nav-links { display: none; }
+    .splash-float-card { display: none; }
+    .splash-hero { padding: 120px 20px 60px; }
+    .splash-cta-inner { padding: 40px 24px; }
+  }
   .geo-status { font-size: 12px; margin-top: 6px; padding: 6px 10px; border-radius: 6px; }
 
   .confirmed-banner { background: linear-gradient(135deg, #D1FAE5, #A7F3D0); border: 2px solid var(--success); border-radius: 12px; padding: 16px 20px; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
@@ -450,12 +674,175 @@ function saveData(key, data) {
 // ============================================================
 // MAIN APP
 // ============================================================
+// ============================================================
+// SPLASH LANDING PAGE
+// ============================================================
+function SplashPage({ onGetStarted, onLearnMore }) {
+  const featuresRef = useRef(null);
+
+  function scrollToFeatures() {
+    if (featuresRef.current) featuresRef.current.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  return (
+    <div className="splash">
+      <div className="splash-bg-grid"></div>
+      <div className="splash-glow-1"></div>
+      <div className="splash-glow-2"></div>
+      <div className="splash-glow-3"></div>
+
+      {/* Nav */}
+      <nav className="splash-nav">
+        <div className="splash-logo">
+          <span className="dot"></span> MeetPoint
+        </div>
+        <div className="splash-nav-links">
+          <a onClick={scrollToFeatures}>Features</a>
+          <a onClick={scrollToFeatures}>How it works</a>
+          <button className="splash-nav-cta" onClick={onGetStarted}>Get Started</button>
+        </div>
+      </nav>
+
+      {/* Floating cards */}
+      <div className="splash-float-card card-1">
+        <div className="fc-icon">📍</div>
+        <div className="fc-label">Birmingham</div>
+        <div className="fc-sub">Best for your group</div>
+      </div>
+      <div className="splash-float-card card-2">
+        <div className="fc-icon">📅</div>
+        <div className="fc-label">March 22-23</div>
+        <div className="fc-sub">Everyone's free</div>
+      </div>
+      <div className="splash-float-card card-3">
+        <div className="fc-icon">🎯</div>
+        <div className="fc-label">5 activities found</div>
+        <div className="fc-sub">Curated for you</div>
+      </div>
+
+      {/* Hero */}
+      <section className="splash-hero">
+        <div className="splash-pill">
+          <span className="live-dot"></span> Now in beta — free to use
+        </div>
+        <h1>Stop talking about meeting up. Actually do it.</h1>
+        <p>MeetPoint finds the perfect city, date, and activities for your group — so the only thing left to do is show up.</p>
+        <div className="splash-cta-group">
+          <button className="splash-btn-main" onClick={onGetStarted}>
+            Get Started — It's Free
+          </button>
+          <button className="splash-btn-sec" onClick={scrollToFeatures}>
+            See How It Works ↓
+          </button>
+        </div>
+        <div className="splash-social-proof">
+          <div className="splash-avatars">
+            <span>👨</span><span>👩</span><span>👨</span><span>👩</span><span>👨</span>
+          </div>
+          <div className="splash-social-text">
+            Trusted by <strong>groups of mates</strong> across the UK
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="splash-section" ref={featuresRef}>
+        <div className="splash-section-label">Features</div>
+        <h2>Everything you need to actually meet up</h2>
+        <p className="section-sub">No more dead WhatsApp threads. No more "let's sort it next week." Just results.</p>
+        <div className="splash-features">
+          <div className="splash-feature">
+            <div className="feat-icon">📍</div>
+            <h3>Smart Location</h3>
+            <p>Finds the most central city for your group using real distances. Fair for everyone, no arguments.</p>
+          </div>
+          <div className="splash-feature">
+            <div className="feat-icon">📅</div>
+            <h3>Date Matching</h3>
+            <p>Mark busy dates or sync your calendar. MeetPoint finds weekends where everyone is actually free.</p>
+          </div>
+          <div className="splash-feature">
+            <div className="feat-icon">🎯</div>
+            <h3>Activity Ideas</h3>
+            <p>Get curated suggestions for things to do in your chosen city — with optional AI-powered research.</p>
+          </div>
+          <div className="splash-feature">
+            <div className="feat-icon">👥</div>
+            <h3>Group Management</h3>
+            <p>Create groups, invite mates via link or WhatsApp, and manage your crew all in one place.</p>
+          </div>
+          <div className="splash-feature">
+            <div className="feat-icon">✅</div>
+            <h3>Vote & Confirm</h3>
+            <p>Everyone votes on the plan. It only locks in when the whole group agrees. Democracy in action.</p>
+          </div>
+          <div className="splash-feature">
+            <div className="feat-icon">🗺️</div>
+            <h3>Interactive Maps</h3>
+            <p>See where everyone lives and where you're meeting on a live map with distance lines.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section className="splash-section">
+        <div className="splash-section-label">How It Works</div>
+        <h2>Four steps to an actual meetup</h2>
+        <p className="section-sub">From "we should catch up" to "see you Saturday" in minutes.</p>
+        <div className="splash-steps">
+          <div className="splash-step">
+            <div className="step-num">1</div>
+            <div className="step-emoji">👤</div>
+            <h4>Set Up</h4>
+            <p>Add your name, city, and optionally connect your calendar.</p>
+          </div>
+          <div className="splash-step">
+            <div className="step-num">2</div>
+            <div className="step-emoji">👥</div>
+            <h4>Invite Friends</h4>
+            <p>Create a group and share the invite link via WhatsApp, text, or email.</p>
+          </div>
+          <div className="splash-step">
+            <div className="step-num">3</div>
+            <div className="step-emoji">📍</div>
+            <h4>Pick a Plan</h4>
+            <p>MeetPoint suggests cities, dates, and activities. You choose what works.</p>
+          </div>
+          <div className="splash-step">
+            <div className="step-num">4</div>
+            <div className="step-emoji">🎉</div>
+            <h4>Meet Up!</h4>
+            <p>Everyone confirms, it's in the calendar, and you're done.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <div className="splash-cta-banner">
+        <div className="splash-cta-inner">
+          <h2>Ready to stop planning and start meeting?</h2>
+          <p>It's free, takes 30 seconds, and works on any device.</p>
+          <button className="splash-btn-main" onClick={onGetStarted}>
+            Get Started Now →
+          </button>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="splash-footer">
+        <p>© 2024 MeetPoint — Built by mates, for mates. 🇬🇧</p>
+      </footer>
+    </div>
+  );
+}
+
 function App() {
   const [currentUser, setCurrentUser] = useState(() => loadData('currentUser', null));
   const [groups, setGroups] = useState(() => loadData('groups', []));
   const [activeGroupId, setActiveGroupId] = useState(null);
   const [view, setView] = useState('home');
   const [modal, setModal] = useState(null);
+  const [showSplash, setShowSplash] = useState(() => !loadData('currentUser', null) && !new URLSearchParams(window.location.search).get('invite'));
 
   useEffect(() => { saveData('groups', groups); }, [groups]);
   useEffect(() => { saveData('currentUser', currentUser); }, [currentUser]);
@@ -464,6 +851,7 @@ function App() {
     const params = new URLSearchParams(window.location.search);
     const code = params.get('invite');
     if (code) {
+      setShowSplash(false);
       if (currentUser) {
         const g = groups.find(g => g.inviteCode === code);
         if (g && !g.members.find(m => m.id === currentUser.id)) {
@@ -473,6 +861,8 @@ function App() {
       setView('join');
     }
   }, [currentUser]);
+
+  if (showSplash) return <SplashPage onGetStarted={() => setShowSplash(false)} />;
 
   if (!currentUser) return <SetupScreen onComplete={user => { setCurrentUser(user); setView('home'); }} />;
 
