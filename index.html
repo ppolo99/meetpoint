@@ -469,6 +469,98 @@ const UK_CITIES = [
   { name: "Ipswich", lat: 52.0567, lng: 1.1482, pop: 140000, activities: ["Visit Christchurch Mansion and Wolsey Art Gallery", "Explore the Ipswich Waterfront and marina", "Walk through Holywells Park and its springs"] },
   { name: "Middlesbrough", lat: 54.5742, lng: -1.2350, pop: 140000, activities: ["Visit MIMA — Middlesbrough Institute of Modern Art", "Cross the Transporter Bridge for unique views", "Explore the Nature's World environmental centre"] },
   { name: "Warwick", lat: 52.2819, lng: -1.5849, pop: 35000, activities: ["Visit Warwick Castle and its medieval grounds", "Explore the Lord Leycester Hospital", "Walk along the River Avon to St Nicholas Park"] },
+  { name: "Colchester", lat: 51.8860, lng: 0.8919, pop: 120000, activities: ["Visit Colchester Castle — the largest Norman keep in Europe", "Explore Firstsite contemporary arts centre", "Walk the Roman walls around the old town"] },
+  { name: "Chelmsford", lat: 51.7356, lng: 0.4685, pop: 180000, activities: ["Visit Chelmsford Cathedral", "Explore Hylands House and its parkland", "Walk along the River Chelmer towpath"] },
+  { name: "Gloucester", lat: 51.8642, lng: -2.2382, pop: 130000, activities: ["Visit Gloucester Cathedral — a Harry Potter filming location", "Explore Gloucester Docks and the Waterways Museum", "Walk the Severn Way along the river"] },
+  { name: "Worcester", lat: 52.1936, lng: -2.2216, pop: 100000, activities: ["Visit Worcester Cathedral on the banks of the Severn", "Explore the Royal Worcester porcelain works", "Walk the city's medieval friar streets"] },
+  { name: "Hereford", lat: 52.0565, lng: -2.7160, pop: 55000, activities: ["Visit Hereford Cathedral and the Mappa Mundi", "Explore the Cider Museum", "Walk along the River Wye at the Bishops Meadows"] },
+  { name: "Lincoln", lat: 53.2307, lng: -0.5406, pop: 100000, activities: ["Visit Lincoln Cathedral on Steep Hill", "Explore Lincoln Castle and the Magna Carta", "Walk the medieval Bailgate quarter"] },
+  { name: "Salisbury", lat: 51.0688, lng: -1.7945, pop: 45000, activities: ["Visit Salisbury Cathedral and see the Magna Carta", "Day trip to Stonehenge nearby", "Walk through the Cathedral Close — the largest in Britain"] },
+  { name: "Winchester", lat: 51.0632, lng: -1.3080, pop: 45000, activities: ["Visit Winchester Cathedral — one of Europe's longest", "Explore the Great Hall and King Arthur's Round Table", "Walk along the River Itchen water meadows"] },
+  { name: "Canterbury", lat: 51.2802, lng: 1.0789, pop: 55000, activities: ["Visit Canterbury Cathedral — a UNESCO World Heritage Site", "Walk the medieval city walls", "Explore the Canterbury Tales visitor experience"] },
+  { name: "Cheltenham", lat: 51.8994, lng: -2.0783, pop: 120000, activities: ["Walk the Regency architecture of the Promenade", "Visit the Holst Birthplace Museum", "Explore Pittville Park and its Pump Room"] },
+  { name: "Harrogate", lat: 53.9921, lng: -1.5418, pop: 75000, activities: ["Visit the Turkish Baths and Royal Pump Room Museum", "Explore Valley Gardens and the Stray", "Walk through the antique shops of Montpellier Quarter"] },
+  { name: "Scarborough", lat: 54.2832, lng: -0.3994, pop: 60000, activities: ["Visit Scarborough Castle on the headland", "Explore the Sea Life Centre and harbour", "Walk the North Bay beach to Peasholm Park"] },
+  { name: "Whitby", lat: 54.4858, lng: -0.6206, pop: 13000, activities: ["Climb the 199 steps to Whitby Abbey", "Explore the harbour and have fish and chips", "Walk the Cleveland Way along the cliffs"] },
+  { name: "Torquay", lat: 50.4619, lng: -3.5253, pop: 65000, activities: ["Visit Kents Cavern prehistoric caves", "Explore the harbour and marina", "Walk the South West Coast Path around Berry Head"] },
+  { name: "Northampton", lat: 52.2405, lng: -0.9027, pop: 215000, activities: ["Visit the Northampton Museum — home of the shoe collection", "Explore Delapré Abbey and its grounds", "Walk through Abington Park and the manor house"] },
+  { name: "Milton Keynes", lat: 52.0406, lng: -0.7594, pop: 250000, activities: ["Visit Bletchley Park — home of the codebreakers", "Explore the MK Gallery for contemporary art", "Walk or cycle the extensive redway network"] },
+  { name: "Swindon", lat: 51.5558, lng: -1.7797, pop: 220000, activities: ["Visit the STEAM Museum of the Great Western Railway", "Explore Lydiard House and Park", "Walk the Ridgeway near the Uffington White Horse"] },
+  { name: "Reading", lat: 51.4543, lng: -0.9781, pop: 230000, activities: ["Visit the Reading Museum and a replica of the Bayeux Tapestry", "Explore Forbury Gardens and the Abbey ruins", "Walk the Thames Path through Caversham"] },
+  { name: "Luton", lat: 51.8787, lng: -0.4200, pop: 215000, activities: ["Visit the Wardown House Museum", "Explore Stockwood Discovery Centre and gardens", "Walk in Dunstable Downs and the Chilterns"] },
+  { name: "Doncaster", lat: 53.5228, lng: -1.1285, pop: 110000, activities: ["Visit the Doncaster Museum and Art Gallery", "Explore Cusworth Hall and its parkland", "Walk the Don Gorge nature trails"] },
+  { name: "Huddersfield", lat: 53.6450, lng: -1.7798, pop: 162000, activities: ["Visit the Tolson Museum in Ravensknowle Park", "Explore the castle ruins at Castle Hill", "Walk the Colne Valley countryside"] },
+  { name: "Wakefield", lat: 53.6830, lng: -1.4956, pop: 100000, activities: ["Visit The Hepworth Wakefield gallery", "Explore the Yorkshire Sculpture Park nearby", "Walk through the medieval cathedral quarter"] },
+  { name: "Bradford", lat: 53.7960, lng: -1.7594, pop: 350000, activities: ["Visit the National Science and Media Museum", "Explore Saltaire — a UNESCO World Heritage village", "Walk in the Brontë country around Haworth"] },
+  { name: "Halifax", lat: 53.7215, lng: -1.8625, pop: 90000, activities: ["Visit the Piece Hall — a stunning Georgian trading hall", "Explore Eureka! the children's museum", "Walk through Shibden Park and Anne Lister's estate"] },
+  { name: "Barnsley", lat: 53.5529, lng: -1.4793, pop: 92000, activities: ["Visit Experience Barnsley museum", "Explore Cannon Hall Museum and country park", "Walk in the Dearne Valley nature reserves"] },
+  { name: "Rotherham", lat: 53.4326, lng: -1.3635, pop: 110000, activities: ["Visit Clifton Park Museum", "Explore Wentworth Woodhouse — the largest country house in England", "Walk in Rother Valley Country Park"] },
+  { name: "Grimsby", lat: 53.5675, lng: -0.0760, pop: 90000, activities: ["Visit the Fishing Heritage Centre", "Explore the Freshney Place market area", "Walk along Cleethorpes seafront nearby"] },
+  { name: "Hull", lat: 53.7457, lng: -0.3367, pop: 260000, activities: ["Visit The Deep — one of the UK's deepest aquariums", "Explore the Museums Quarter and Ferens Art Gallery", "Walk the marina and the old town cobbled streets"] },
+  { name: "Wigan", lat: 53.5448, lng: -2.6318, pop: 105000, activities: ["Visit the Museum of Wigan Life", "Explore Haigh Hall and its woodland trails", "Walk the Leeds-Liverpool Canal towpath"] },
+  { name: "Bolton", lat: 53.5785, lng: -2.4299, pop: 140000, activities: ["Visit Bolton Museum and Aquarium", "Explore Smithills Hall — a medieval manor", "Walk in the West Pennine Moors"] },
+  { name: "Stockport", lat: 53.4106, lng: -2.1575, pop: 140000, activities: ["Explore the Hat Museum in the famous hat works", "Visit Staircase House — a medieval townhouse", "Walk along the Etherow and Goyt river valleys"] },
+  { name: "Oldham", lat: 53.5409, lng: -2.1114, pop: 100000, activities: ["Visit Saddleworth Museum", "Explore the Gallery Oldham", "Walk the Pennine moorlands of Saddleworth"] },
+  { name: "Rochdale", lat: 53.6097, lng: -2.1561, pop: 110000, activities: ["Visit the Rochdale Pioneers Museum — birthplace of co-operatives", "Explore Rochdale Town Hall's stunning architecture", "Walk in Hollingworth Lake country park"] },
+  { name: "Burnley", lat: 53.7893, lng: -2.2481, pop: 90000, activities: ["Visit Towneley Hall Art Gallery and Museum", "Explore the Queen Street Mill — a working steam-powered mill", "Walk the Burnley Way through the Pennines"] },
+  { name: "Blackburn", lat: 53.7489, lng: -2.4847, pop: 120000, activities: ["Visit Blackburn Cathedral", "Explore the Blackburn Museum and Art Gallery", "Walk in the Witton Country Park"] },
+  { name: "Crewe", lat: 53.0988, lng: -2.4415, pop: 75000, activities: ["Visit Crewe Heritage Centre for railway history", "Explore Queens Park and its gardens", "Walk the Crewe to Nantwich Greenway"] },
+  { name: "Telford", lat: 52.6778, lng: -2.4497, pop: 170000, activities: ["Visit the Ironbridge Gorge — a UNESCO World Heritage Site", "Explore Blists Hill Victorian Town", "Walk in the Wrekin and Telford Town Park"] },
+  { name: "Mansfield", lat: 53.1472, lng: -1.1983, pop: 110000, activities: ["Visit the Palace Theatre", "Explore Sherwood Forest and the Major Oak nearby", "Walk through the Water Meadows nature reserve"] },
+  { name: "Chesterfield", lat: 53.2350, lng: -1.4210, pop: 105000, activities: ["See the famous Crooked Spire church", "Explore the open-air market — one of Britain's largest", "Walk the Five Pits Trail through the countryside"] },
+  { name: "Stafford", lat: 52.8060, lng: -2.1167, pop: 70000, activities: ["Visit the Ancient High House — the largest timber-framed town house in England", "Explore Stafford Castle and its grounds", "Walk the Staffordshire Way through Cannock Chase"] },
+  { name: "Loughborough", lat: 52.7722, lng: -1.2064, pop: 60000, activities: ["Visit the Great Central Railway — a heritage steam line", "Explore the Carillon Tower and War Memorial Museum", "Walk in Charnwood Forest and Bradgate Park"] },
+  { name: "Guildford", lat: 51.2362, lng: -0.5704, pop: 80000, activities: ["Visit Guildford Castle and its grounds", "Explore the historic cobbled High Street", "Walk along the River Wey Navigation"] },
+  { name: "Maidstone", lat: 51.2724, lng: 0.5219, pop: 115000, activities: ["Visit Maidstone Museum and Bentlif Art Gallery", "Explore Leeds Castle — the loveliest castle in the world", "Walk along the River Medway through the town"] },
+  { name: "Hastings", lat: 50.8536, lng: 0.5730, pop: 90000, activities: ["Visit Hastings Castle ruins and 1066 Story", "Explore the old town's net huts and Stade", "Walk the cliff-top East Hill Country Park"] },
+  { name: "Eastbourne", lat: 50.7684, lng: 0.2901, pop: 100000, activities: ["Walk to Beachy Head for dramatic cliff views", "Explore the Towner Art Gallery", "Visit the Eastbourne Pier and promenade"] },
+  { name: "Portsmouth", lat: 50.8198, lng: -1.0880, pop: 210000, activities: ["Visit the Historic Dockyard and HMS Victory", "Climb the Spinnaker Tower for harbour views", "Explore the D-Day Story museum at Southsea"] },
+  { name: "Chichester", lat: 50.8365, lng: -0.7792, pop: 30000, activities: ["Visit Chichester Cathedral", "Explore the Pallant House Gallery", "Walk the harbour and Fishbourne Roman Palace nearby"] },
+  { name: "Truro", lat: 50.2632, lng: -5.0510, pop: 22000, activities: ["Visit Truro Cathedral — Cornwall's only city cathedral", "Explore the Royal Cornwall Museum", "Walk the Truro River to Malpas"] },
+  { name: "St Albans", lat: 51.7554, lng: -0.3365, pop: 90000, activities: ["Visit St Albans Cathedral and the Roman Verulamium", "Explore Verulamium Museum and the Roman mosaic", "Walk through the medieval clock tower and market"] },
+  { name: "Stratford-upon-Avon", lat: 52.1917, lng: -1.7083, pop: 30000, activities: ["Visit Shakespeare's Birthplace and the Royal Shakespeare Theatre", "Explore Anne Hathaway's Cottage", "Walk along the River Avon and the canal basin"] },
+  { name: "Newquay", lat: 50.4129, lng: -5.0757, pop: 22000, activities: ["Hit the surf at Fistral Beach", "Visit the Blue Reef Aquarium", "Walk the coastal path to Towan Head"] },
+  { name: "Bangor", lat: 53.2274, lng: -4.1293, pop: 18000, activities: ["Cross to Anglesey via Menai Bridge", "Visit Penrhyn Castle", "Walk the pier — the longest in Wales"] },
+  { name: "Llandudno", lat: 53.3241, lng: -3.8276, pop: 20000, activities: ["Take the tramway up the Great Orme", "Walk the sweeping Victorian promenade", "Visit the Alice in Wonderland Centre"] },
+  { name: "Wrexham", lat: 53.0468, lng: -2.9925, pop: 65000, activities: ["Visit St Giles' Church and the Yale memorial", "Explore Erddig — a National Trust stately home", "Walk in the Clywedog Valley trail"] },
+  { name: "Newport", lat: 51.5842, lng: -2.9977, pop: 155000, activities: ["Cross the Newport Transporter Bridge", "Visit the Tredegar House and its gardens", "Walk the wetlands at the RSPB Newport reserve"] },
+  { name: "Aberystwyth", lat: 52.4153, lng: -4.0829, pop: 16000, activities: ["Ride the cliff railway to Constitution Hill", "Walk the seafront promenade and pier", "Visit the National Library of Wales"] },
+  { name: "Ayr", lat: 55.4585, lng: -4.6291, pop: 46000, activities: ["Visit Robert Burns Birthplace Museum", "Walk along the long sandy beach", "Explore the Auld Kirk and Burns heritage trail"] },
+  { name: "Dumfries", lat: 55.0703, lng: -3.6101, pop: 35000, activities: ["Visit Burns House — where Robert Burns lived his final years", "Explore Dumfries Museum and Camera Obscura", "Walk along the River Nith and Caerlaverock Castle nearby"] },
+  { name: "Fort William", lat: 56.8198, lng: -5.1052, pop: 10000, activities: ["Ride the Jacobite steam train over Glenfinnan Viaduct", "Walk the Great Glen Way or climb Ben Nevis", "Visit the West Highland Museum"] },
+  { name: "Oban", lat: 56.4119, lng: -5.4714, pop: 9000, activities: ["Visit McCaig's Tower for panoramic bay views", "Take a ferry to the Inner Hebrides", "Explore the Oban Distillery on a whisky tour"] },
+  { name: "St Andrews", lat: 56.3398, lng: -2.7967, pop: 17000, activities: ["Play the Old Course — the home of golf", "Visit St Andrews Castle and Cathedral ruins", "Walk the West Sands beach"] },
+  { name: "Londonderry", lat: 54.9966, lng: -7.3086, pop: 110000, activities: ["Walk the complete circuit of the 17th-century city walls", "Visit the Tower Museum and Free Derry Corner", "Cross the Peace Bridge over the River Foyle"] },
+  { name: "Newry", lat: 54.1751, lng: -6.3402, pop: 30000, activities: ["Visit Newry Cathedral — the first Catholic cathedral built after emancipation", "Explore the Newry and Mourne Museum", "Walk the towpath of the Newry Canal — the oldest summit-level canal in the British Isles"] },
+  { name: "Lisburn", lat: 54.5162, lng: -6.0580, pop: 75000, activities: ["Visit the Irish Linen Centre and Lisburn Museum", "Explore Hillsborough Castle and its gardens", "Walk the Lagan towpath towards Belfast"] },
+  { name: "Folkestone", lat: 51.0816, lng: 1.1666, pop: 53000, activities: ["Walk the Creative Quarter's cobbled streets", "Explore the Folkestone Artworks along the harbour", "Visit the Leas Cliff promenade for Channel views"] },
+  { name: "Margate", lat: 51.3854, lng: 1.3867, pop: 65000, activities: ["Visit the Turner Contemporary art gallery", "Explore the Shell Grotto's mysterious tunnels", "Walk along the sandy main beach and harbour"] },
+  { name: "Dover", lat: 51.1279, lng: 1.3134, pop: 40000, activities: ["Walk the White Cliffs of Dover", "Visit Dover Castle — the key to England", "Explore the secret wartime tunnels"] },
+  { name: "Kendal", lat: 54.3280, lng: -2.7461, pop: 30000, activities: ["Visit the Kendal Museum and Abbott Hall Art Gallery", "Explore Kendal Castle ruins", "Walk the trail to the Lake District from the town"] },
+  { name: "Penrith", lat: 54.6641, lng: -2.7527, pop: 16000, activities: ["Explore Penrith Castle and the Giant's Grave", "Visit Rheged Centre — Europe's largest grass-roofed building", "Walk to nearby Ullswater in the Lake District"] },
+  { name: "Keswick", lat: 54.6014, lng: -3.1347, pop: 5000, activities: ["Walk around Derwentwater lake", "Visit the Keswick Museum and Pencil Museum", "Climb Catbells for iconic Lake District views"] },
+  { name: "Buxton", lat: 53.2590, lng: -1.9114, pop: 23000, activities: ["Visit the Buxton Opera House and Pavilion Gardens", "Explore Poole's Cavern limestone caves", "Walk the Monsal Trail through the Peak District"] },
+  { name: "Matlock", lat: 53.1399, lng: -1.5545, pop: 10000, activities: ["Visit the Heights of Abraham via cable car", "Explore Matlock Bath and its illuminations", "Walk through Derwent Valley Mills World Heritage corridor"] },
+  { name: "Taunton", lat: 51.0148, lng: -3.1029, pop: 65000, activities: ["Visit the Museum of Somerset in Taunton Castle", "Explore Vivary Park and its cricket ground", "Walk the Quantock Hills — England's first AONB"] },
+  { name: "Yeovil", lat: 50.9452, lng: -2.6320, pop: 50000, activities: ["Visit the Fleet Air Arm Museum at Yeovilton", "Explore Montacute House — an Elizabethan masterpiece", "Walk the Ham Hill Country Park trails"] },
+  { name: "Barnstaple", lat: 51.0783, lng: -3.9333, pop: 35000, activities: ["Visit the Museum of Barnstaple and North Devon", "Explore the Pannier Market Hall", "Walk or cycle the Tarka Trail along the estuary"] },
+  { name: "Weymouth", lat: 50.6095, lng: -2.4519, pop: 55000, activities: ["Walk the Georgian esplanade and sandy beach", "Visit Nothe Fort for harbour views", "Explore the Jurassic Coast nearby"] },
+  { name: "King's Lynn", lat: 52.7537, lng: 0.3952, pop: 45000, activities: ["Visit the Lynn Museum and the Seahenge replica", "Explore the Custom House on the quay", "Walk the medieval merchants' quarter"] },
+  { name: "Great Yarmouth", lat: 52.6059, lng: 1.7307, pop: 40000, activities: ["Walk the Golden Mile seafront and Pleasure Beach", "Visit the Elizabethan House Museum", "Explore the ancient Row Houses and Tolhouse"] },
+  { name: "Southend-on-Sea", lat: 51.5459, lng: 0.7077, pop: 180000, activities: ["Walk the world's longest pleasure pier", "Visit the Southend Pier Museum", "Explore Adventure Island and the seafront"] },
+  { name: "Basildon", lat: 51.5761, lng: 0.4887, pop: 115000, activities: ["Visit the Wat Tyler Country Park", "Explore Basildon Park — a National Trust Palladian mansion", "Walk in Langdon Hills and enjoy the views"] },
+  { name: "Watford", lat: 51.6565, lng: -0.3957, pop: 97000, activities: ["Visit the Warner Bros Studio Tour — The Making of Harry Potter", "Explore Cassiobury Park and the nature reserve", "Walk the Grand Union Canal towpath"] },
+  { name: "Slough", lat: 51.5105, lng: -0.5950, pop: 165000, activities: ["Visit Stoke Poges Memorial Garden and Gray's inspiration", "Explore Langley Park and its film-location woods", "Walk the Jubilee River and meadows"] },
+  { name: "Woking", lat: 51.3162, lng: -0.5600, pop: 105000, activities: ["Visit the Shah Jahan Mosque — the UK's first purpose-built mosque", "Explore the Lightbox gallery and museum", "Walk in Horsell Common — the setting of War of the Worlds"] },
+  { name: "Basingstoke", lat: 51.2667, lng: -1.0876, pop: 115000, activities: ["Visit Milestones Museum of living history", "Explore The Vyne — a Tudor palace with neoclassical portico", "Walk in the North Downs chalk countryside"] },
+  { name: "Crawley", lat: 51.1092, lng: -0.1872, pop: 115000, activities: ["Visit Tilgate Park and its nature centre", "Explore Worth Way — a disused railway trail", "Walk in Buchan Country Park"] },
+  { name: "Bury St Edmunds", lat: 52.2474, lng: 0.7183, pop: 45000, activities: ["Visit the Abbey Gardens and cathedral", "Explore the Moyse's Hall Museum", "Walk the Bury St Edmunds town trail and Athenaeum"] },
+  { name: "Newmarket", lat: 52.2434, lng: 0.4069, pop: 20000, activities: ["Visit the National Horseracing Museum", "Explore Tattersalls and the racing heritage", "Walk on the gallops and watch morning exercise"] },
+  { name: "Darlington", lat: 54.5235, lng: -1.5527, pop: 106000, activities: ["Visit Head of Steam — the Darlington Railway Museum", "Explore the Victorian Market and town centre", "Walk the Skerne riverside paths"] },
+  { name: "Bishop Auckland", lat: 54.6615, lng: -1.6810, pop: 25000, activities: ["Visit Auckland Castle and the Zurbarán paintings", "Explore the Kynren outdoor spectacular venue", "Walk through Escomb and see the Saxon church"] },
+  { name: "Durham", lat: 54.7753, lng: -1.5849, pop: 50000, activities: ["Visit Durham Cathedral — a UNESCO World Heritage Site", "Explore Durham Castle and the riverbanks", "Walk the River Wear loop through the gorge"] },
+  { name: "Berwick-upon-Tweed", lat: 55.7711, lng: -2.0070, pop: 13000, activities: ["Walk the Elizabethan town walls — the best-preserved in England", "Visit the Berwick Barracks and art galleries", "Explore the three bridges across the Tweed"] },
+  { name: "Hexham", lat: 54.9714, lng: -2.1008, pop: 12000, activities: ["Visit Hexham Abbey — founded in 674 AD", "Explore the Old Gaol — England's oldest purpose-built prison", "Walk to Hadrian's Wall from the town"] },
 ];
 
 // ============================================================
@@ -836,6 +928,102 @@ function SplashPage({ onGetStarted, onLearnMore }) {
   );
 }
 
+// ============================================================
+// WELCOME WIZARD (first-time user onboarding)
+// ============================================================
+function WelcomeWizard({ userName, onCreateGroup, onDismiss }) {
+  const [wizStep, setWizStep] = useState(0);
+  const [groupName, setGroupName] = useState('');
+
+  const steps = [
+    {
+      icon: '🎉',
+      title: `Welcome to MeetPoint, ${userName}!`,
+      body: "You're all set up. Let's walk you through planning your first meetup — it only takes a minute.",
+      action: () => setWizStep(1),
+      actionLabel: "Show me how →",
+      skipLabel: "I'll explore on my own"
+    },
+    {
+      icon: '👥',
+      title: 'Step 1: Create a Group',
+      body: "First, create a group for your mates. Give it a name — something like 'Uni Crew', 'Work Lot', or 'Sunday Football'. You'll invite people next.",
+      hasInput: true,
+      action: () => { if (groupName.trim()) setWizStep(2); },
+      actionLabel: "Next →",
+      skipLabel: null
+    },
+    {
+      icon: '📨',
+      title: 'Step 2: Invite Your Friends',
+      body: "Once your group's created, you'll get an invite link to share via WhatsApp, email, or just copy and paste. Friends click the link, add their details, and they're in.",
+      action: () => setWizStep(3),
+      actionLabel: "Got it →",
+      skipLabel: null
+    },
+    {
+      icon: '📍',
+      title: 'Step 3: Plan a Meetup',
+      body: "Hit 'New Meetup' and MeetPoint does the hard work — it finds a city that's central for everyone, dates when you're all free, and things to do when you get there.",
+      action: () => setWizStep(4),
+      actionLabel: "And then? →",
+      skipLabel: null
+    },
+    {
+      icon: '✅',
+      title: 'Step 4: Everyone Votes',
+      body: "The group votes on the plan. Once everyone accepts, it's confirmed and you can add it straight to your calendar. No more 'we should meet up sometime' — it's done.",
+      action: () => { if (groupName.trim()) { onCreateGroup(groupName.trim()); } else { onDismiss(); } },
+      actionLabel: groupName.trim() ? "Create my group & get started! →" : "Let's go! →",
+      skipLabel: null
+    }
+  ];
+
+  const s = steps[wizStep];
+
+  return (
+    <div className="modal-overlay" onClick={onDismiss}>
+      <div className="modal" onClick={e => e.stopPropagation()} style={{maxWidth:500, textAlign:'center'}}>
+        {/* Progress bar */}
+        <div style={{display:'flex', gap:4, marginBottom:24}}>
+          {steps.map((_, i) => (
+            <div key={i} style={{flex:1, height:4, borderRadius:2, background: i <= wizStep ? 'var(--primary)' : 'var(--border)', transition:'background 0.3s'}}></div>
+          ))}
+        </div>
+
+        <div style={{fontSize:56, marginBottom:16, animation:'fadeSlideUp 0.4s ease-out'}}>{s.icon}</div>
+        <h2 style={{fontSize:22, marginBottom:12, animation:'fadeSlideUp 0.4s ease-out 0.1s both'}}>{s.title}</h2>
+        <p style={{fontSize:14, color:'var(--text-light)', lineHeight:1.7, marginBottom:24, animation:'fadeSlideUp 0.4s ease-out 0.2s both'}}>{s.body}</p>
+
+        {s.hasInput && (
+          <div className="form-group" style={{textAlign:'left', marginBottom:20}}>
+            <label>Group name</label>
+            <input value={groupName} onChange={e => setGroupName(e.target.value)} placeholder="e.g. Uni Mates, The Lads, Weekend Crew" />
+            {!groupName.trim() && <div style={{fontSize:12, color:'var(--text-light)', marginTop:4}}>You can always rename it later</div>}
+          </div>
+        )}
+
+        <button className="btn btn-primary" style={{width:'100%', padding:'14px 24px', fontSize:15}} onClick={s.action}
+          disabled={s.hasInput && !groupName.trim()}>
+          {s.actionLabel}
+        </button>
+
+        {s.skipLabel && (
+          <button onClick={onDismiss} style={{width:'100%', marginTop:10, background:'none', border:'none', color:'var(--text-light)', fontSize:13, cursor:'pointer', padding:8}}>
+            {s.skipLabel}
+          </button>
+        )}
+
+        {wizStep > 0 && wizStep < steps.length - 1 && (
+          <button onClick={() => setWizStep(wizStep - 1)} style={{width:'100%', marginTop:4, background:'none', border:'none', color:'var(--text-light)', fontSize:13, cursor:'pointer', padding:4}}>
+            ← Back
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const [currentUser, setCurrentUser] = useState(() => loadData('currentUser', null));
   const [groups, setGroups] = useState(() => loadData('groups', []));
@@ -843,6 +1031,7 @@ function App() {
   const [view, setView] = useState('home');
   const [modal, setModal] = useState(null);
   const [showSplash, setShowSplash] = useState(() => !loadData('currentUser', null) && !new URLSearchParams(window.location.search).get('invite'));
+  const [showWelcome, setShowWelcome] = useState(false);
 
   useEffect(() => { saveData('groups', groups); }, [groups]);
   useEffect(() => { saveData('currentUser', currentUser); }, [currentUser]);
@@ -864,7 +1053,7 @@ function App() {
 
   if (showSplash) return <SplashPage onGetStarted={() => setShowSplash(false)} />;
 
-  if (!currentUser) return <SetupScreen onComplete={user => { setCurrentUser(user); setView('home'); }} />;
+  if (!currentUser) return <SetupScreen onComplete={user => { setCurrentUser(user); setView('home'); setShowWelcome(true); }} />;
 
   const activeGroup = groups.find(g => g.id === activeGroupId);
 
@@ -921,7 +1110,6 @@ function App() {
           <div onClick={() => setModal('profile')} style={{cursor:'pointer'}} title="Edit profile">
             <Avatar user={currentUser} size={32} fontSize={13} />
           </div>
-          <button onClick={() => { if (confirm('Log out? Your data will be cleared from this browser.')) { localStorage.removeItem('meetpoint_currentUser'); localStorage.removeItem('meetpoint_groups'); setCurrentUser(null); setGroups([]); setActiveGroupId(null); setView('home'); setShowSplash(true); } }} style={{background:'rgba(255,255,255,0.1)', border:'1px solid rgba(255,255,255,0.2)', padding:'6px 12px', fontSize:'12px'}}>Log out</button>
         </div>
       </header>
 
@@ -945,7 +1133,8 @@ function App() {
       {modal === 'profile' && (
         <div className="modal-overlay" onClick={() => setModal(null)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
-            <ProfileEditor user={currentUser} onSave={u => { setCurrentUser(u); setModal(null); }} onCancel={() => setModal(null)} />
+            <ProfileEditor user={currentUser} onSave={u => { setCurrentUser(u); setModal(null); }} onCancel={() => setModal(null)}
+              onLogout={() => { localStorage.removeItem('meetpoint_currentUser'); localStorage.removeItem('meetpoint_groups'); setCurrentUser(null); setGroups([]); setActiveGroupId(null); setView('home'); setShowSplash(true); setModal(null); }} />
           </div>
         </div>
       )}
@@ -987,7 +1176,7 @@ function App() {
               { q: "What's the AI suggestions feature?", a: "When planning a meetup, you can toggle on the AI assistant to get tailored activity ideas for your chosen city. In this prototype it gives general suggestions — in the full version it would research specific restaurants, events, and attractions." },
               { q: "Is my data shared with anyone?", a: "This is a client-side prototype — all your data stays in your browser's local storage. Nothing is sent to a server. To test with friends on different devices, everyone needs to be on the same browser, or you can demo the flow in separate tabs." },
               { q: "Can I set up recurring meetups?", a: "Yes — in the Settings tab for your group, turn on 'Auto-schedule meetups' and pick a cadence (monthly, quarterly, etc.). The app will prompt the group to plan a new meetup at that interval." },
-              { q: "What if my city isn't in the list?", a: "We've got 40+ UK cities loaded with real coordinates. Start typing and it should appear. If it's a smaller town, pick the nearest city to you — the distance calculations will still work well." }
+              { q: "What if my city isn't in the list?", a: "We've got 130+ UK cities and towns loaded with real coordinates — from major cities down to market towns. Start typing and it should appear. If it's a smaller village, pick the nearest town to you — the distance calculations will still work well." }
             ].map((item, i) => (
               <details key={i} style={{marginBottom:12, borderBottom:'1px solid var(--border)', paddingBottom:12}}>
                 <summary style={{cursor:'pointer', fontWeight:600, fontSize:14, padding:'4px 0', color:'var(--text)'}}>{item.q}</summary>
@@ -999,6 +1188,17 @@ function App() {
             </div>
           </div>
         </div>
+      )}
+
+      {showWelcome && (
+        <WelcomeWizard
+          userName={currentUser.name}
+          onCreateGroup={(gName) => {
+            createGroup(gName);
+            setShowWelcome(false);
+          }}
+          onDismiss={() => setShowWelcome(false)}
+        />
       )}
     </div>
   );
@@ -1214,6 +1414,8 @@ function SetupScreen({ onComplete }) {
   const [msCal, setMsCal] = useState(false);
   const [icsFile, setIcsFile] = useState(null);
   const [busyDates, setBusyDates] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
   const geo = useGeolocation();
 
   useEffect(() => {
@@ -1250,9 +1452,21 @@ function SetupScreen({ onComplete }) {
     reader.readAsText(file);
   }
 
+  function validate() {
+    const errs = {};
+    if (!name.trim()) errs.name = 'Please enter your name';
+    else if (name.trim().length < 2) errs.name = 'Name must be at least 2 characters';
+    if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) errs.email = 'Please enter a valid email address';
+    if (!city.trim()) errs.city = 'Please select your nearest city';
+    else if (!findCityByName(city)) errs.city = 'City not found — please pick one from the suggestions';
+    return errs;
+  }
+
   function goToStep2() {
-    const found = findCityByName(city);
-    if (!name.trim() || !found) return;
+    setTouched({ name: true, email: true, city: true });
+    const errs = validate();
+    setErrors(errs);
+    if (Object.keys(errs).length > 0) return;
     setStep(2);
   }
 
@@ -1327,28 +1541,40 @@ function SetupScreen({ onComplete }) {
             </div>
 
             <div className="form-group">
-              <label>Your name</label>
-              <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Alex" />
+              <label>Your name <span style={{color:'var(--danger)'}}>*</span></label>
+              <input value={name} onChange={e => { setName(e.target.value); if (touched.name) { const errs = {...errors}; if (e.target.value.trim().length >= 2) delete errs.name; else errs.name = e.target.value.trim() ? 'Name must be at least 2 characters' : 'Please enter your name'; setErrors(errs); } }}
+                onBlur={() => { setTouched(t => ({...t, name: true})); const errs = validate(); setErrors(errs); }}
+                placeholder="e.g. Alex"
+                style={touched.name && errors.name ? {borderColor:'var(--danger)', boxShadow:'0 0 0 3px rgba(239,68,68,0.1)'} : {}} />
+              {touched.name && errors.name && <div style={{fontSize:12, color:'var(--danger)', marginTop:4, display:'flex', alignItems:'center', gap:4}}>⚠ {errors.name}</div>}
             </div>
             <div className="form-group">
               <label>Email <span style={{fontWeight:400, color:'var(--text-light)'}}>(optional — enables Gravatar)</span></label>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="e.g. alex@example.com" />
-              {email && !profileImage && (
+              <input type="email" value={email} onChange={e => { setEmail(e.target.value); if (touched.email) { const errs = {...errors}; if (!e.target.value.trim() || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.target.value.trim())) delete errs.email; else errs.email = 'Please enter a valid email address'; setErrors(errs); } }}
+                onBlur={() => { setTouched(t => ({...t, email: true})); const errs = validate(); setErrors(errs); }}
+                placeholder="e.g. alex@example.com"
+                style={touched.email && errors.email ? {borderColor:'var(--danger)', boxShadow:'0 0 0 3px rgba(239,68,68,0.1)'} : {}} />
+              {touched.email && errors.email && <div style={{fontSize:12, color:'var(--danger)', marginTop:4, display:'flex', alignItems:'center', gap:4}}>⚠ {errors.email}</div>}
+              {email && !errors.email && !profileImage && (
                 <div style={{fontSize:11, color:'var(--text-light)', marginTop:4}}>
                   If you have a <a href="https://gravatar.com" target="_blank" rel="noopener" style={{color:'var(--primary)'}}>Gravatar</a> linked to this email, it will be used as your profile picture.
                 </div>
               )}
             </div>
             <div className="form-group" style={{position:'relative'}}>
-              <label>Your nearest city (UK)</label>
+              <label>Your nearest city (UK) <span style={{color:'var(--danger)'}}>*</span></label>
               <div className="city-input-wrap">
-                <input value={city} onChange={e => handleCityInput(e.target.value)} placeholder="Start typing a city..." />
+                <input value={city} onChange={e => { handleCityInput(e.target.value); if (touched.city) { const errs = {...errors}; const found = findCityByName(e.target.value); if (found) delete errs.city; else errs.city = e.target.value.trim() ? 'City not found — please pick one from the suggestions' : 'Please select your nearest city'; setErrors(errs); } }}
+                  onBlur={() => { setTouched(t => ({...t, city: true})); const errs = validate(); setErrors(errs); }}
+                  placeholder="Start typing a city..."
+                  style={touched.city && errors.city ? {borderColor:'var(--danger)', boxShadow:'0 0 0 3px rgba(239,68,68,0.1)'} : {}} />
                 <button className={`geo-btn-inline ${geo.status === 'loading' ? 'loading' : ''}`}
                   onClick={geo.detect} disabled={geo.status === 'loading'}
                   title="Use my location">
                   📍
                 </button>
               </div>
+              {touched.city && errors.city && <div style={{fontSize:12, color:'var(--danger)', marginTop:4, display:'flex', alignItems:'center', gap:4}}>⚠ {errors.city}</div>}
               {suggestions.length > 0 && (
                 <div style={{position:'absolute', top:'100%', left:0, right:0, background:'white', border:'1px solid var(--border)', borderRadius:8, zIndex:10, boxShadow:'0 4px 12px rgba(0,0,0,0.1)'}}>
                   {suggestions.map(s => (
@@ -1458,7 +1684,7 @@ function SetupScreen({ onComplete }) {
 // ============================================================
 // PROFILE EDITOR (with geolocation)
 // ============================================================
-function ProfileEditor({ user, onSave, onCancel }) {
+function ProfileEditor({ user, onSave, onCancel, onLogout }) {
   const [name, setName] = useState(user.name);
   const [email, setEmail] = useState(user.email || '');
   const [profileImage, setProfileImage] = useState(user.profileImage || '');
@@ -1554,6 +1780,18 @@ function ProfileEditor({ user, onSave, onCancel }) {
         <button className="btn btn-ghost" onClick={onCancel}>Cancel</button>
         <button className="btn btn-primary" onClick={save}>Save</button>
       </div>
+
+      {onLogout && (
+        <div style={{marginTop:24, paddingTop:16, borderTop:'1px solid var(--border)'}}>
+          <button onClick={() => { if (confirm('Log out? Your data will be cleared from this browser.')) onLogout(); }}
+            style={{width:'100%', padding:'10px 16px', background:'none', border:'1px solid var(--danger)', borderRadius:8, color:'var(--danger)', fontSize:13, fontWeight:600, cursor:'pointer', transition:'all 0.2s'}}
+            onMouseOver={e => { e.target.style.background='#FEE2E2'; }}
+            onMouseOut={e => { e.target.style.background='none'; }}>
+            Log out
+          </button>
+          <p style={{fontSize:11, color:'var(--text-light)', textAlign:'center', marginTop:6}}>This will clear all your data from this browser.</p>
+        </div>
+      )}
     </div>
   );
 }
@@ -2248,18 +2486,86 @@ function MeetupsTab({ group, currentUser, onUpdateMeetup }) {
               height="260px"
             />
 
-            {m.activity !== null && m.activity !== undefined && (
-              <div style={{background:'var(--bg)', padding:10, borderRadius:8, fontSize:13, marginBottom:12}}>
-                <strong>Activity:</strong> {UK_CITIES.find(c => c.name === m.city)?.activities?.[m.activity] || 'Custom activity'}
-              </div>
-            )}
+            {/* Activities section */}
+            {(() => {
+              const customActivities = m.customActivities || [];
+              const cityData = UK_CITIES.find(c => c.name === m.city);
+              const presetActivity = (m.activity !== null && m.activity !== undefined) ? (cityData?.activities?.[m.activity] || null) : null;
+              const hasAnyActivity = presetActivity || customActivities.length > 0 || m.aiSuggestions;
 
-            {m.aiSuggestions && (
-              <details style={{marginBottom:12}}>
-                <summary style={{cursor:'pointer', fontSize:13, color:'var(--primary)'}}>🤖 AI Things to do</summary>
-                <pre style={{marginTop:8, background:'var(--bg)', padding:12, borderRadius:8, fontSize:12, whiteSpace:'pre-wrap'}}>{m.aiSuggestions}</pre>
-              </details>
-            )}
+              return (
+                <div style={{marginBottom:12}}>
+                  {presetActivity && (
+                    <div style={{background:'var(--bg)', padding:10, borderRadius:8, fontSize:13, marginBottom:8}}>
+                      <strong>Activity:</strong> {presetActivity}
+                    </div>
+                  )}
+
+                  {customActivities.length > 0 && (
+                    <div style={{marginBottom:8}}>
+                      <div style={{fontSize:13, fontWeight:600, marginBottom:6, display:'flex', alignItems:'center', gap:6}}>🎯 Things to do</div>
+                      {customActivities.map((act, idx) => (
+                        <div key={idx} style={{display:'flex', alignItems:'center', gap:8, padding:'8px 12px', background:'var(--bg)', borderRadius:8, marginBottom:4, fontSize:13}}>
+                          <span style={{flex:1}}>{act}</span>
+                          {isAdmin && (
+                            <button onClick={() => {
+                              const updated = customActivities.filter((_, i) => i !== idx);
+                              onUpdateMeetup(m.id, { customActivities: updated });
+                            }} style={{background:'none', border:'none', color:'var(--danger)', cursor:'pointer', fontSize:14, padding:0}} title="Remove">✕</button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {m.aiSuggestions && (
+                    <details style={{marginBottom:8}}>
+                      <summary style={{cursor:'pointer', fontSize:13, color:'var(--primary)'}}>🤖 AI Things to do</summary>
+                      <pre style={{marginTop:8, background:'var(--bg)', padding:12, borderRadius:8, fontSize:12, whiteSpace:'pre-wrap'}}>{m.aiSuggestions}</pre>
+                    </details>
+                  )}
+
+                  {isAdmin && (
+                    <div style={{border:'1px solid var(--border)', borderRadius:10, padding:12, background:'#FAFBFF'}}>
+                      <div style={{fontSize:12, fontWeight:600, color:'var(--text-light)', marginBottom:8, textTransform:'uppercase', letterSpacing:'0.5px'}}>
+                        {hasAnyActivity ? 'Add more activities' : 'No activities yet — add some!'}
+                      </div>
+                      <div style={{display:'flex', gap:8, marginBottom:8}}>
+                        <input
+                          id={`custom-activity-${m.id}`}
+                          placeholder="e.g. Visit the castle, Try the local brewery..."
+                          style={{flex:1, fontSize:13}}
+                          onKeyDown={e => {
+                            if (e.key === 'Enter' && e.target.value.trim()) {
+                              onUpdateMeetup(m.id, { customActivities: [...customActivities, e.target.value.trim()] });
+                              e.target.value = '';
+                            }
+                          }}
+                        />
+                        <button className="btn btn-sm btn-primary" onClick={() => {
+                          const input = document.getElementById(`custom-activity-${m.id}`);
+                          if (input && input.value.trim()) {
+                            onUpdateMeetup(m.id, { customActivities: [...customActivities, input.value.trim()] });
+                            input.value = '';
+                          }
+                        }}>+ Add</button>
+                      </div>
+                      {!m.aiSuggestions && (
+                        <button className="btn btn-sm btn-secondary" style={{width:'100%'}} onClick={() => {
+                          const cityActivities = cityData?.activities || [];
+                          const aiText = cityActivities.length > 0
+                            ? `AI-suggested things to do in ${m.city}:\n\n${cityActivities.map((a, i) => `${i+1}. ${a}`).join('\n')}\n\nMore ideas:\n• Check local event listings for live music and festivals\n• Find the best-rated restaurants on TripAdvisor\n• Look for escape rooms, bowling, or activity centres\n• Explore local walking trails and parks`
+                            : `AI-suggested things to do in ${m.city}:\n\n• Explore the city centre and local landmarks\n• Find the best-rated restaurants and pubs\n• Check local event listings for what's on\n• Look for escape rooms, bowling, or activities\n• Visit nearby parks and walking trails\n• Check TripAdvisor for top-rated attractions`;
+                          onUpdateMeetup(m.id, { aiSuggestions: aiText });
+                        }}>
+                          🤖 Get AI Suggestions for {m.city}
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
 
             <div style={{display:'flex', gap:8, flexWrap:'wrap', alignItems:'center'}}>
               <VoteButton meetup={m} userId={currentUser.id} vote="accept" label="✓ Accept" onUpdateMeetup={onUpdateMeetup} />
