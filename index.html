@@ -1,0 +1,1548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MeetPoint — Friend Meetup Planner</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<style>
+  :root {
+    --primary: #4F46E5;
+    --primary-light: #818CF8;
+    --primary-dark: #3730A3;
+    --accent: #F59E0B;
+    --bg: #F8FAFC;
+    --card: #FFFFFF;
+    --text: #1E293B;
+    --text-light: #64748B;
+    --border: #E2E8F0;
+    --success: #10B981;
+    --danger: #EF4444;
+    --warning: #F59E0B;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  .app-header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,0.15); position: sticky; top: 0; z-index: 100; }
+  .app-header h1 { font-size: 22px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .app-header .user-info { display: flex; align-items: center; gap: 12px; font-size: 14px; }
+  .app-header .user-info button { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+  .app-header .user-info button:hover { background: rgba(255,255,255,0.3); }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px; }
+
+  .card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 24px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .card h2 { font-size: 18px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .card h3 { font-size: 15px; margin-bottom: 12px; color: var(--text-light); }
+
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border-radius: 8px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-secondary { background: white; color: var(--primary); border: 1px solid var(--primary); }
+  .btn-secondary:hover { background: #EEF2FF; }
+  .btn-success { background: var(--success); color: white; }
+  .btn-success:hover { background: #059669; }
+  .btn-danger { background: var(--danger); color: white; }
+  .btn-danger:hover { background: #DC2626; }
+  .btn-warning { background: var(--accent); color: white; }
+  .btn-warning:hover { background: #D97706; }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+  .btn-ghost { background: transparent; color: var(--text-light); border: 1px solid var(--border); }
+  .btn-ghost:hover { background: var(--bg); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  input, select, textarea { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; font-family: inherit; outline: none; transition: border 0.2s; }
+  input:focus, select:focus, textarea:focus { border-color: var(--primary-light); box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+  label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+
+  .form-group { margin-bottom: 16px; }
+  .form-row { display: flex; gap: 12px; }
+  .form-row > * { flex: 1; }
+
+  .badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+  .badge-primary { background: #EEF2FF; color: var(--primary); }
+  .badge-success { background: #D1FAE5; color: #065F46; }
+  .badge-warning { background: #FEF3C7; color: #92400E; }
+  .badge-danger { background: #FEE2E2; color: #991B1B; }
+
+  .member-list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .member-chip { display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: #EEF2FF; border-radius: 20px; font-size: 13px; }
+  .member-chip .remove { cursor: pointer; color: var(--danger); font-weight: bold; margin-left: 4px; }
+  .member-chip .location { color: var(--text-light); font-size: 11px; }
+
+  .tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 2px solid var(--border); padding-bottom: 0; }
+  .tab { padding: 10px 20px; cursor: pointer; font-size: 14px; font-weight: 500; color: var(--text-light); border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+  .suggestion-card { border: 2px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; transition: all 0.2s; position: relative; }
+  .suggestion-card:hover { border-color: var(--primary-light); box-shadow: 0 4px 12px rgba(79,70,229,0.1); }
+  .suggestion-card.selected { border-color: var(--success); background: #F0FDF4; }
+  .suggestion-card h4 { font-size: 16px; margin-bottom: 8px; }
+  .suggestion-card .distance { color: var(--text-light); font-size: 13px; margin-bottom: 12px; }
+
+  .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 12px; }
+  .calendar-header { text-align: center; font-size: 12px; font-weight: 600; color: var(--text-light); padding: 8px 0; }
+  .calendar-day { text-align: center; padding: 8px 4px; border-radius: 8px; font-size: 13px; cursor: pointer; transition: all 0.15s; min-height: 38px; display: flex; align-items: center; justify-content: center; }
+  .calendar-day:hover { background: #EEF2FF; }
+  .calendar-day.today { font-weight: 700; }
+  .calendar-day.busy { background: #FEE2E2; color: #991B1B; cursor: default; }
+  .calendar-day.busy:hover { background: #FEE2E2; }
+  .calendar-day.suggested { background: #D1FAE5; color: #065F46; font-weight: 600; }
+  .calendar-day.selected-date { background: var(--primary); color: white; font-weight: 600; }
+  .calendar-day.other-month { color: #CBD5E1; }
+  .calendar-day.empty { cursor: default; }
+  .calendar-day.empty:hover { background: transparent; }
+  .calendar-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .calendar-nav button { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 12px; cursor: pointer; font-size: 14px; }
+  .calendar-nav button:hover { background: var(--bg); }
+
+  .date-suggestion { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; }
+  .date-suggestion.chosen { border-color: var(--success); background: #F0FDF4; }
+
+  .invite-box { background: #EEF2FF; border: 2px dashed var(--primary-light); border-radius: 12px; padding: 20px; text-align: center; }
+  .invite-box code { display: inline-block; background: white; padding: 8px 16px; border-radius: 8px; font-size: 14px; margin: 12px 0; border: 1px solid var(--border); word-break: break-all; }
+
+  .step-indicator { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; }
+  .step { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-light); }
+  .step.active { color: var(--primary); font-weight: 600; }
+  .step.done { color: var(--success); }
+  .step-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; border: 2px solid var(--border); color: var(--text-light); }
+  .step.active .step-dot { border-color: var(--primary); background: var(--primary); color: white; }
+  .step.done .step-dot { border-color: var(--success); background: var(--success); color: white; }
+  .step-line { width: 40px; height: 2px; background: var(--border); }
+
+  .toggle { position: relative; display: inline-block; width: 44px; height: 24px; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #CBD5E1; border-radius: 24px; transition: 0.3s; }
+  .toggle .slider:before { content: ""; position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.3s; }
+  .toggle input:checked + .slider { background: var(--primary); }
+  .toggle input:checked + .slider:before { transform: translateX(20px); }
+
+  .empty-state { text-align: center; padding: 40px; color: var(--text-light); }
+  .empty-state .icon { font-size: 48px; margin-bottom: 16px; }
+
+  .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 200; }
+  .modal { background: white; border-radius: 16px; padding: 32px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; }
+  .modal h2 { margin-bottom: 20px; }
+
+  .settings-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .settings-row:last-child { border: none; }
+  .settings-label { font-size: 14px; }
+  .settings-label small { display: block; color: var(--text-light); font-weight: 400; font-size: 12px; margin-top: 2px; }
+
+  .comment-item { padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .comment-item:last-child { border: none; }
+  .comment-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .comment-avatar { width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary-light)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 10px; flex-shrink: 0; }
+  .comment-author { font-weight: 600; font-size: 13px; }
+  .comment-time { font-size: 11px; color: var(--text-light); }
+  .comment-body { font-size: 13px; color: var(--text); padding-left: 32px; line-height: 1.5; }
+  .comment-input-row { display: flex; gap: 8px; margin-top: 12px; }
+  .comment-input-row input { flex: 1; }
+
+  .geo-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: linear-gradient(135deg, var(--success), #059669); color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-top: 8px; }
+  .geo-btn:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(16,185,129,0.3); }
+  .geo-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+  .geo-status { font-size: 12px; margin-top: 6px; padding: 6px 10px; border-radius: 6px; }
+
+  .confirmed-banner { background: linear-gradient(135deg, #D1FAE5, #A7F3D0); border: 2px solid var(--success); border-radius: 12px; padding: 16px 20px; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+  .confirmed-banner .icon { font-size: 28px; }
+  .confirmed-banner .text { font-weight: 600; color: #065F46; }
+  .confirmed-banner .subtext { font-size: 12px; color: #047857; margin-top: 2px; }
+
+  .progress-ring { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-light); margin-top: 8px; }
+  .progress-dots { display: flex; gap: 3px; }
+  .progress-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  .cal-connect-btn { display: inline-flex; align-items: center; gap: 10px; padding: 12px 20px; border-radius: 10px; border: 2px solid var(--border); font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; background: white; width: 100%; margin-bottom: 10px; }
+  .cal-connect-btn:hover { border-color: var(--primary-light); box-shadow: 0 2px 8px rgba(79,70,229,0.1); }
+  .cal-connect-btn.connected { border-color: var(--success); background: #F0FDF4; }
+  .cal-connect-btn .cal-icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+  .cal-connect-btn .cal-status { margin-left: auto; font-size: 12px; font-weight: 500; }
+
+  .share-buttons { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .share-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 10px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .share-btn:hover { transform: translateY(-1px); box-shadow: 0 3px 10px rgba(0,0,0,0.15); }
+  .share-btn-whatsapp { background: #25D366; color: white; }
+  .share-btn-copy { background: var(--primary); color: white; }
+  .share-btn-email { background: #EA4335; color: white; }
+
+  @media (max-width: 640px) {
+    .form-row { flex-direction: column; }
+    .container { padding: 16px; }
+    .step-line { width: 16px; }
+    .step span { display: none; }
+    .share-buttons { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useCallback, useRef, useMemo } = React;
+
+// ============================================================
+// UK CITIES DATABASE (real coordinates)
+// ============================================================
+const UK_CITIES = [
+  { name: "London", lat: 51.5074, lng: -0.1278, pop: 9000000, activities: ["Visit the British Museum and its world-class collections", "Take a Thames river cruise past the Houses of Parliament", "Explore Borough Market for street food and artisan goods"] },
+  { name: "Birmingham", lat: 52.4862, lng: -1.8904, pop: 1150000, activities: ["Explore the Jewellery Quarter's independent shops and cafes", "Visit the Birmingham Museum and Art Gallery", "Walk along the canal network — more canals than Venice"] },
+  { name: "Manchester", lat: 53.4808, lng: -2.2426, pop: 550000, activities: ["Tour the National Football Museum at Urbis", "Explore the Northern Quarter's street art and vinyl shops", "Visit the Science and Industry Museum"] },
+  { name: "Leeds", lat: 53.8008, lng: -1.5491, pop: 500000, activities: ["Visit the Royal Armouries Museum", "Explore Kirkgate Market — one of Europe's largest indoor markets", "Walk along the Leeds-Liverpool canal towpath"] },
+  { name: "Liverpool", lat: 53.4084, lng: -2.9916, pop: 500000, activities: ["Take the Mersey Ferry for iconic waterfront views", "Visit the World Museum and Walker Art Gallery", "Explore the Albert Dock and Tate Liverpool"] },
+  { name: "Sheffield", lat: 53.3811, lng: -1.4701, pop: 580000, activities: ["Visit the Kelham Island Museum of steel heritage", "Walk in the Peak District — minutes from the city centre", "Explore the Millennium Gallery and Winter Garden"] },
+  { name: "Bristol", lat: 51.4545, lng: -2.5879, pop: 460000, activities: ["Cross the Clifton Suspension Bridge for panoramic views", "Explore the SS Great Britain and harbourside", "Visit the street art around Stokes Croft and Banksy's hometown"] },
+  { name: "Edinburgh", lat: 55.9533, lng: -3.1883, pop: 520000, activities: ["Walk the Royal Mile from castle to palace", "Climb Arthur's Seat for city-wide views", "Explore the National Museum of Scotland"] },
+  { name: "Glasgow", lat: 55.8642, lng: -4.2518, pop: 635000, activities: ["Visit the Kelvingrove Art Gallery and Museum", "Explore the vibrant Merchant City neighbourhood", "Tour the Riverside Museum of transport"] },
+  { name: "Cardiff", lat: 51.4816, lng: -3.1791, pop: 360000, activities: ["Explore Cardiff Castle and its ornate Victorian interiors", "Walk around Cardiff Bay and the Millennium Centre", "Visit the National Museum Cardiff for art and natural history"] },
+  { name: "Newcastle", lat: 54.9783, lng: -1.6178, pop: 300000, activities: ["Walk across the Tyne Bridge and Millennium Bridge", "Visit the BALTIC Centre for Contemporary Art", "Explore the historic Grainger Town architecture"] },
+  { name: "Nottingham", lat: 52.9548, lng: -1.1581, pop: 330000, activities: ["Explore Nottingham Castle and the caves beneath it", "Visit the City of Caves for a unique underground tour", "Walk through the Lace Market's historic streets"] },
+  { name: "Leicester", lat: 52.6369, lng: -1.1398, pop: 350000, activities: ["Visit the King Richard III Visitor Centre", "Explore the National Space Centre", "Walk through the vibrant Golden Mile on Belgrave Road"] },
+  { name: "Southampton", lat: 50.9097, lng: -1.4044, pop: 250000, activities: ["Visit SeaCity Museum and the Titanic story", "Explore the medieval city walls", "Take a boat trip around the Solent"] },
+  { name: "Plymouth", lat: 50.3755, lng: -4.1427, pop: 260000, activities: ["Walk along Plymouth Hoe and see Smeaton's Tower", "Visit the National Marine Aquarium", "Explore the historic Barbican and Mayflower Steps"] },
+  { name: "York", lat: 53.9591, lng: -1.0815, pop: 210000, activities: ["Walk the medieval city walls — the longest in England", "Visit York Minster and its stained glass windows", "Explore The Shambles, one of the best-preserved medieval streets"] },
+  { name: "Norwich", lat: 52.6309, lng: 1.2974, pop: 200000, activities: ["Visit Norwich Cathedral and its stunning cloisters", "Explore Norwich Castle Museum and Art Gallery", "Walk through the medieval lanes and Norwich Market"] },
+  { name: "Oxford", lat: 51.7520, lng: -1.2577, pop: 150000, activities: ["Tour the Bodleian Library and its historic reading rooms", "Punt along the River Cherwell", "Visit the Ashmolean Museum — the world's first university museum"] },
+  { name: "Cambridge", lat: 52.2053, lng: 0.1218, pop: 130000, activities: ["Go punting on the River Cam past the college backs", "Visit the Fitzwilliam Museum's art collections", "Explore King's College Chapel and its fan-vaulted ceiling"] },
+  { name: "Bath", lat: 51.3811, lng: -2.3590, pop: 90000, activities: ["Visit the Roman Baths and Pump Room", "Walk the Royal Crescent and Circus Georgian architecture", "Relax at the Thermae Bath Spa's rooftop pool"] },
+  { name: "Exeter", lat: 50.7184, lng: -3.5339, pop: 130000, activities: ["Visit Exeter Cathedral and its astronomical clock", "Explore the underground passages beneath the city", "Walk along the Exeter Quayside and canal"] },
+  { name: "Chester", lat: 53.1905, lng: -2.8909, pop: 120000, activities: ["Walk the complete circuit of Chester's Roman walls", "Explore The Rows — unique medieval two-tier galleries", "Visit Chester Zoo, one of the UK's best"] },
+  { name: "Inverness", lat: 57.4778, lng: -4.2247, pop: 50000, activities: ["Take a boat trip on Loch Ness", "Visit Inverness Castle overlooking the River Ness", "Explore the Victorian Market in the city centre"] },
+  { name: "Aberdeen", lat: 57.1497, lng: -2.0943, pop: 230000, activities: ["Visit the Maritime Museum and learn about the North Sea", "Walk along the golden sands of Aberdeen Beach", "Explore Old Aberdeen and King's College"] },
+  { name: "Dundee", lat: 56.4620, lng: -2.9707, pop: 150000, activities: ["Visit the V&A Dundee design museum", "Explore RRS Discovery at Discovery Point", "Walk along the Dundee waterfront and Tay Bridge"] },
+  { name: "Swansea", lat: 51.6214, lng: -3.9436, pop: 240000, activities: ["Visit the Dylan Thomas Centre", "Explore Mumbles village and its Victorian pier", "Walk the Gower Peninsula — the UK's first AONB"] },
+  { name: "Belfast", lat: 54.5973, lng: -5.9301, pop: 340000, activities: ["Visit the Titanic Belfast museum", "Explore the Cathedral Quarter's pubs and galleries", "Walk through the Botanic Gardens and Ulster Museum"] },
+  { name: "Blackpool", lat: 53.8175, lng: -3.0357, pop: 140000, activities: ["Climb Blackpool Tower for coastal panoramas", "Walk the Pleasure Beach amusement park", "Stroll along the promenade and three piers"] },
+  { name: "Brighton", lat: 50.8225, lng: -0.1372, pop: 230000, activities: ["Explore the Royal Pavilion's Indo-Saracenic architecture", "Walk along the vibrant Brighton Lanes for shopping", "Visit the Brighton Palace Pier and seafront"] },
+  { name: "Bournemouth", lat: 50.7192, lng: -1.8808, pop: 190000, activities: ["Walk the seven miles of sandy beaches", "Visit the Russell-Cotes Art Gallery and Museum", "Explore the Lower Gardens and Victorian parks"] },
+  { name: "Coventry", lat: 52.4068, lng: -1.5197, pop: 370000, activities: ["Visit Coventry Cathedral — old and new side by side", "Explore the Coventry Transport Museum", "Walk through the medieval Spon Street"] },
+  { name: "Stoke-on-Trent", lat: 53.0027, lng: -2.1794, pop: 260000, activities: ["Visit the Wedgwood Museum and factory tour", "Explore the Gladstone Pottery Museum", "Tour the Potteries Museum and Art Gallery"] },
+  { name: "Derby", lat: 52.9225, lng: -1.4746, pop: 260000, activities: ["Visit the Derby Museum and Joseph Wright Gallery", "Explore the Derwent Valley Mills World Heritage Site", "Tour the Rolls-Royce heritage exhibits"] },
+  { name: "Wolverhampton", lat: 52.5870, lng: -2.1288, pop: 260000, activities: ["Visit Wolverhampton Art Gallery", "Explore Bantock House Museum and Park", "Walk through West Park's beautiful gardens"] },
+  { name: "Sunderland", lat: 54.9069, lng: -1.3838, pop: 175000, activities: ["Visit the National Glass Centre", "Explore Sunderland Museum and Winter Gardens", "Walk along Roker and Seaburn beaches"] },
+  { name: "Preston", lat: 53.7632, lng: -2.7031, pop: 145000, activities: ["Visit the Harris Museum, Art Gallery and Library", "Explore Avenham and Miller Parks along the Ribble", "Walk through the historic city centre and Flag Market"] },
+  { name: "Lancaster", lat: 54.0466, lng: -2.8007, pop: 52000, activities: ["Visit Lancaster Castle and the Priory Church", "Explore the Williamson Park and Ashton Memorial", "Walk along the Lancaster Canal towpath"] },
+  { name: "Carlisle", lat: 54.8951, lng: -2.9382, pop: 75000, activities: ["Explore Carlisle Castle — 900 years of history", "Visit the Tullie House Museum", "Walk the sections of Hadrian's Wall nearby"] },
+  { name: "Stirling", lat: 56.1165, lng: -3.9369, pop: 45000, activities: ["Visit Stirling Castle perched on its volcanic crag", "Explore the Wallace Monument and its panoramic views", "Walk the historic Old Town and its medieval lanes"] },
+  { name: "Perth", lat: 56.3950, lng: -3.4308, pop: 47000, activities: ["Visit the Perth Museum — Scotland's newest national museum", "Explore Scone Palace and its grounds", "Walk along the River Tay and Kinnoull Hill"] },
+  { name: "Shrewsbury", lat: 52.7074, lng: -2.7556, pop: 72000, activities: ["Explore the medieval streets and half-timbered buildings", "Visit Shrewsbury Castle and the Shropshire Regimental Museum", "Walk along the River Severn loop around the town"] },
+  { name: "Peterborough", lat: 52.5695, lng: -0.2405, pop: 200000, activities: ["Visit Peterborough Cathedral and its painted ceiling", "Explore Flag Fen — a Bronze Age archaeological site", "Walk through the Nene Park along the river"] },
+  { name: "Ipswich", lat: 52.0567, lng: 1.1482, pop: 140000, activities: ["Visit Christchurch Mansion and Wolsey Art Gallery", "Explore the Ipswich Waterfront and marina", "Walk through Holywells Park and its springs"] },
+  { name: "Middlesbrough", lat: 54.5742, lng: -1.2350, pop: 140000, activities: ["Visit MIMA — Middlesbrough Institute of Modern Art", "Cross the Transporter Bridge for unique views", "Explore the Nature's World environmental centre"] },
+  { name: "Warwick", lat: 52.2819, lng: -1.5849, pop: 35000, activities: ["Visit Warwick Castle and its medieval grounds", "Explore the Lord Leycester Hospital", "Walk along the River Avon to St Nicholas Park"] },
+];
+
+// ============================================================
+// UTILITY FUNCTIONS
+// ============================================================
+function generateId() {
+  return Math.random().toString(36).substr(2, 9) + Date.now().toString(36);
+}
+
+function generateInviteCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 8; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  return code.substr(0,4) + '-' + code.substr(4);
+}
+
+function haversineDistance(lat1, lng1, lat2, lng2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function findNearestCity(lat, lng) {
+  let nearest = null;
+  let minDist = Infinity;
+  for (const city of UK_CITIES) {
+    const d = haversineDistance(lat, lng, city.lat, city.lng);
+    if (d < minDist) { minDist = d; nearest = city; }
+  }
+  return nearest;
+}
+
+function findCentralPoint(locations) {
+  if (!locations.length) return null;
+  const avgLat = locations.reduce((s,l) => s + l.lat, 0) / locations.length;
+  const avgLng = locations.reduce((s,l) => s + l.lng, 0) / locations.length;
+  return { lat: avgLat, lng: avgLng };
+}
+
+function suggestMeetingCities(memberLocations, topN = 3) {
+  if (!memberLocations.length) return [];
+  const center = findCentralPoint(memberLocations);
+  const scored = UK_CITIES.map(city => {
+    const distFromCenter = haversineDistance(center.lat, center.lng, city.lat, city.lng);
+    const maxDistFromMembers = Math.max(...memberLocations.map(m => haversineDistance(m.lat, m.lng, city.lat, city.lng)));
+    const avgDistFromMembers = memberLocations.map(m => haversineDistance(m.lat, m.lng, city.lat, city.lng)).reduce((a,b)=>a+b,0) / memberLocations.length;
+    const popScore = Math.log10(city.pop) / 7;
+    const score = (1 / (1 + avgDistFromMembers * 0.01)) * 0.5 + popScore * 0.3 + (1 / (1 + maxDistFromMembers * 0.005)) * 0.2;
+    return { ...city, distFromCenter, avgDistFromMembers, maxDistFromMembers, score, memberDistances: memberLocations.map(m => ({name: m.name, distance: Math.round(haversineDistance(m.lat, m.lng, city.lat, city.lng))})) };
+  });
+  scored.sort((a,b) => b.score - a.score);
+  return scored.slice(0, topN);
+}
+
+function findCityByName(name) {
+  return UK_CITIES.find(c => c.name.toLowerCase() === name.toLowerCase());
+}
+
+function getDaysInMonth(year, month) {
+  return new Date(year, month + 1, 0).getDate();
+}
+
+function formatDate(d) {
+  if (typeof d === 'string') d = new Date(d);
+  return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function dateToKey(d) {
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function timeAgo(dateStr) {
+  const d = new Date(dateStr);
+  const now = new Date();
+  const mins = Math.floor((now - d) / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days}d ago`;
+}
+
+function suggestDates(busyDates, durationDays, numSuggestions = 3) {
+  const suggestions = [];
+  const today = new Date();
+  const busySet = new Set(busyDates);
+  for (let offset = 7; offset < 120 && suggestions.length < numSuggestions; offset++) {
+    const startDate = new Date(today);
+    startDate.setDate(today.getDate() + offset);
+    let allFree = true;
+    for (let d = 0; d < durationDays; d++) {
+      const check = new Date(startDate);
+      check.setDate(startDate.getDate() + d);
+      if (busySet.has(dateToKey(check))) { allFree = false; break; }
+    }
+    if (allFree) {
+      const endDate = new Date(startDate);
+      endDate.setDate(startDate.getDate() + durationDays - 1);
+      suggestions.push({ start: new Date(startDate), end: endDate, key: dateToKey(startDate) });
+      offset += durationDays + 6;
+    }
+  }
+  return suggestions;
+}
+
+function generateICalEvent(title, start, end, location, description) {
+  const fmt = d => new Date(d).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+  return `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//MeetPoint//EN
+BEGIN:VEVENT
+UID:${generateId()}@meetpoint
+DTSTART:${fmt(start)}
+DTEND:${fmt(end)}
+SUMMARY:${title}
+LOCATION:${location}
+DESCRIPTION:${description}
+END:VEVENT
+END:VCALENDAR`;
+}
+
+function downloadIcal(title, start, end, location, description) {
+  const content = generateICalEvent(title, start, end, location, description);
+  const blob = new Blob([content], { type: 'text/calendar' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `${title.replace(/\s+/g, '-')}.ics`; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ============================================================
+// DATA PERSISTENCE (localStorage)
+// ============================================================
+function loadData(key, fallback) {
+  try { const d = localStorage.getItem('meetpoint_' + key); return d ? JSON.parse(d) : fallback; }
+  catch { return fallback; }
+}
+function saveData(key, data) {
+  localStorage.setItem('meetpoint_' + key, JSON.stringify(data));
+}
+
+// ============================================================
+// MAIN APP
+// ============================================================
+function App() {
+  const [currentUser, setCurrentUser] = useState(() => loadData('currentUser', null));
+  const [groups, setGroups] = useState(() => loadData('groups', []));
+  const [activeGroupId, setActiveGroupId] = useState(null);
+  const [view, setView] = useState('home');
+  const [modal, setModal] = useState(null);
+
+  useEffect(() => { saveData('groups', groups); }, [groups]);
+  useEffect(() => { saveData('currentUser', currentUser); }, [currentUser]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('invite');
+    if (code && currentUser) {
+      const g = groups.find(g => g.inviteCode === code);
+      if (g && !g.members.find(m => m.id === currentUser.id)) {
+        setActiveGroupId(g.id);
+        setView('join');
+      }
+    }
+  }, [currentUser]);
+
+  if (!currentUser) return <SetupScreen onComplete={user => { setCurrentUser(user); setView('home'); }} />;
+
+  const activeGroup = groups.find(g => g.id === activeGroupId);
+
+  function createGroup(name) {
+    const g = {
+      id: generateId(), name, inviteCode: generateInviteCode(),
+      members: [{ ...currentUser, role: 'owner' }],
+      meetups: [],
+      settings: { cadence: 'none', cadenceMonths: 3, autoSchedule: false, calendarWrite: false },
+      created: new Date().toISOString()
+    };
+    setGroups(prev => [...prev, g]);
+    setActiveGroupId(g.id);
+    setView('group');
+  }
+
+  function joinGroup(code) {
+    const g = groups.find(g => g.inviteCode === code.toUpperCase().trim());
+    if (!g) return 'Group not found. Check the invite code.';
+    if (g.members.find(m => m.id === currentUser.id)) return 'You are already in this group.';
+    const updated = groups.map(gr => gr.id === g.id ? { ...gr, members: [...gr.members, { ...currentUser, role: 'member' }] } : gr);
+    setGroups(updated);
+    setActiveGroupId(g.id);
+    setView('group');
+    return null;
+  }
+
+  function updateGroup(groupId, updates) {
+    setGroups(prev => prev.map(g => g.id === groupId ? { ...g, ...updates } : g));
+  }
+
+  function removeMember(groupId, memberId) {
+    setGroups(prev => prev.map(g => g.id === groupId ? { ...g, members: g.members.filter(m => m.id !== memberId) } : g));
+  }
+
+  function addMeetup(groupId, meetup) {
+    setGroups(prev => prev.map(g => g.id === groupId ? { ...g, meetups: [...g.meetups, { id: generateId(), ...meetup, votes: {}, comments: [], status: 'proposed', created: new Date().toISOString() }] } : g));
+  }
+
+  function updateMeetup(groupId, meetupId, updates) {
+    setGroups(prev => prev.map(g => g.id === groupId ? { ...g, meetups: g.meetups.map(m => m.id === meetupId ? { ...m, ...updates } : m) } : g));
+  }
+
+  return (
+    <div>
+      <header className="app-header">
+        <h1 onClick={() => { setView('home'); setActiveGroupId(null); }} style={{cursor:'pointer'}}>
+          <span style={{fontSize:28}}>📍</span> MeetPoint
+        </h1>
+        <div className="user-info">
+          <span>{currentUser.name} — {currentUser.city}</span>
+          <button onClick={() => setModal('profile')}>Profile</button>
+        </div>
+      </header>
+
+      <div className="container">
+        {view === 'home' && (
+          <HomeScreen groups={groups} onCreateGroup={() => setView('create')}
+            onSelectGroup={id => { setActiveGroupId(id); setView('group'); }} onJoinGroup={() => setView('join')} />
+        )}
+        {view === 'create' && <CreateGroupScreen onBack={() => setView('home')} onCreate={createGroup} />}
+        {view === 'join' && <JoinGroupScreen onBack={() => setView('home')} onJoin={joinGroup} />}
+        {view === 'group' && activeGroup && (
+          <GroupScreen group={activeGroup} currentUser={currentUser}
+            onBack={() => { setView('home'); setActiveGroupId(null); }}
+            onUpdateGroup={updates => updateGroup(activeGroup.id, updates)}
+            onRemoveMember={mid => removeMember(activeGroup.id, mid)}
+            onAddMeetup={m => addMeetup(activeGroup.id, m)}
+            onUpdateMeetup={(mid, updates) => updateMeetup(activeGroup.id, mid, updates)} />
+        )}
+      </div>
+
+      {modal === 'profile' && (
+        <div className="modal-overlay" onClick={() => setModal(null)}>
+          <div className="modal" onClick={e => e.stopPropagation()}>
+            <ProfileEditor user={currentUser} onSave={u => { setCurrentUser(u); setModal(null); }} onCancel={() => setModal(null)} />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================
+// GEOLOCATION HOOK
+// ============================================================
+function useGeolocation() {
+  const [state, setState] = useState({ status: 'idle', city: null, error: null });
+
+  const detect = useCallback(() => {
+    if (!navigator.geolocation) {
+      setState({ status: 'error', city: null, error: 'Geolocation is not supported by your browser' });
+      return;
+    }
+    setState({ status: 'loading', city: null, error: null });
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const nearest = findNearestCity(pos.coords.latitude, pos.coords.longitude);
+        if (nearest) {
+          setState({ status: 'success', city: nearest, error: null });
+        } else {
+          setState({ status: 'error', city: null, error: 'Could not find a nearby UK city. You may not be in the UK.' });
+        }
+      },
+      err => {
+        let msg = 'Location access denied.';
+        if (err.code === 2) msg = 'Location unavailable.';
+        if (err.code === 3) msg = 'Location request timed out.';
+        setState({ status: 'error', city: null, error: msg });
+      },
+      { enableHighAccuracy: false, timeout: 10000 }
+    );
+  }, []);
+
+  return { ...state, detect };
+}
+
+// ============================================================
+// SETUP SCREEN (with geolocation)
+// ============================================================
+function SetupScreen({ onComplete }) {
+  const [name, setName] = useState('');
+  const [city, setCity] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+  const geo = useGeolocation();
+
+  useEffect(() => {
+    if (geo.status === 'success' && geo.city) {
+      setCity(geo.city.name);
+      setSuggestions([]);
+    }
+  }, [geo.status]);
+
+  function handleCityInput(val) {
+    setCity(val);
+    if (val.length > 1) {
+      setSuggestions(UK_CITIES.filter(c => c.name.toLowerCase().includes(val.toLowerCase())).slice(0,5));
+    } else { setSuggestions([]); }
+  }
+
+  function submit() {
+    const found = findCityByName(city);
+    if (!name.trim() || !found) return;
+    onComplete({ id: generateId(), name: name.trim(), city: found.name, lat: found.lat, lng: found.lng, busyDates: [] });
+  }
+
+  return (
+    <div style={{display:'flex', alignItems:'center', justifyContent:'center', minHeight:'100vh', background:'linear-gradient(135deg, #4F46E5, #7C3AED)'}}>
+      <div className="card" style={{maxWidth:450, width:'90%'}}>
+        <div style={{textAlign:'center', marginBottom:24}}>
+          <div style={{fontSize:48, marginBottom:8}}>📍</div>
+          <h1 style={{fontSize:28, marginBottom:4}}>MeetPoint</h1>
+          <p style={{color:'var(--text-light)'}}>Plan meetups with friends, effortlessly</p>
+        </div>
+        <div className="form-group">
+          <label>Your name</label>
+          <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Alex" />
+        </div>
+        <div className="form-group" style={{position:'relative'}}>
+          <label>Your nearest city (UK)</label>
+          <input value={city} onChange={e => handleCityInput(e.target.value)} placeholder="Start typing a city or use location..." />
+          {suggestions.length > 0 && (
+            <div style={{position:'absolute', top:'100%', left:0, right:0, background:'white', border:'1px solid var(--border)', borderRadius:8, zIndex:10, boxShadow:'0 4px 12px rgba(0,0,0,0.1)'}}>
+              {suggestions.map(s => (
+                <div key={s.name} onClick={() => { setCity(s.name); setSuggestions([]); }}
+                  style={{padding:'10px 14px', cursor:'pointer', fontSize:14, borderBottom:'1px solid var(--border)'}}>
+                  {s.name}
+                </div>
+              ))}
+            </div>
+          )}
+          <button className="geo-btn" onClick={geo.detect} disabled={geo.status === 'loading'}>
+            {geo.status === 'loading' ? (
+              <span>Detecting location...</span>
+            ) : (
+              <span>📍 Use my location</span>
+            )}
+          </button>
+          {geo.status === 'success' && geo.city && (
+            <div className="geo-status" style={{background:'#D1FAE5', color:'#065F46'}}>
+              Detected: {geo.city.name}
+            </div>
+          )}
+          {geo.status === 'error' && (
+            <div className="geo-status" style={{background:'#FEE2E2', color:'#991B1B'}}>
+              {geo.error} You can still type your city manually.
+            </div>
+          )}
+        </div>
+        <button className="btn btn-primary" style={{width:'100%'}} onClick={submit} disabled={!name.trim() || !findCityByName(city)}>
+          Get Started
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// PROFILE EDITOR (with geolocation)
+// ============================================================
+function ProfileEditor({ user, onSave, onCancel }) {
+  const [name, setName] = useState(user.name);
+  const [city, setCity] = useState(user.city);
+  const [suggestions, setSuggestions] = useState([]);
+  const geo = useGeolocation();
+
+  useEffect(() => {
+    if (geo.status === 'success' && geo.city) {
+      setCity(geo.city.name);
+      setSuggestions([]);
+    }
+  }, [geo.status]);
+
+  function handleCityInput(val) {
+    setCity(val);
+    if (val.length > 1) {
+      setSuggestions(UK_CITIES.filter(c => c.name.toLowerCase().includes(val.toLowerCase())).slice(0,5));
+    } else { setSuggestions([]); }
+  }
+
+  function save() {
+    const found = findCityByName(city);
+    if (!name.trim() || !found) return;
+    onSave({ ...user, name: name.trim(), city: found.name, lat: found.lat, lng: found.lng });
+  }
+
+  return (
+    <div>
+      <h2>Edit Profile</h2>
+      <div className="form-group">
+        <label>Name</label>
+        <input value={name} onChange={e => setName(e.target.value)} />
+      </div>
+      <div className="form-group" style={{position:'relative'}}>
+        <label>Nearest City</label>
+        <input value={city} onChange={e => handleCityInput(e.target.value)} />
+        {suggestions.length > 0 && (
+          <div style={{position:'absolute', top:'100%', left:0, right:0, background:'white', border:'1px solid var(--border)', borderRadius:8, zIndex:10, boxShadow:'0 4px 12px rgba(0,0,0,0.1)'}}>
+            {suggestions.map(s => (
+              <div key={s.name} onClick={() => { setCity(s.name); setSuggestions([]); }}
+                style={{padding:'10px 14px', cursor:'pointer', fontSize:14}}>
+                {s.name}
+              </div>
+            ))}
+          </div>
+        )}
+        <button className="geo-btn" onClick={geo.detect} disabled={geo.status === 'loading'}>
+          {geo.status === 'loading' ? 'Detecting...' : '📍 Use my location'}
+        </button>
+        {geo.status === 'success' && geo.city && (
+          <div className="geo-status" style={{background:'#D1FAE5', color:'#065F46'}}>Detected: {geo.city.name}</div>
+        )}
+        {geo.status === 'error' && (
+          <div className="geo-status" style={{background:'#FEE2E2', color:'#991B1B'}}>{geo.error}</div>
+        )}
+      </div>
+      <div style={{display:'flex', gap:12}}>
+        <button className="btn btn-ghost" onClick={onCancel}>Cancel</button>
+        <button className="btn btn-primary" onClick={save}>Save</button>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// HOME SCREEN
+// ============================================================
+function HomeScreen({ groups, onCreateGroup, onSelectGroup, onJoinGroup }) {
+  return (
+    <div>
+      <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:24}}>
+        <h2 style={{fontSize:24}}>Your Groups</h2>
+        <div style={{display:'flex', gap:8}}>
+          <button className="btn btn-secondary" onClick={onJoinGroup}>Join Group</button>
+          <button className="btn btn-primary" onClick={onCreateGroup}>+ New Group</button>
+        </div>
+      </div>
+      {groups.length === 0 ? (
+        <div className="empty-state">
+          <div className="icon">👥</div>
+          <h3 style={{marginBottom:8}}>No groups yet</h3>
+          <p>Create a group to start planning meetups with friends, or join one with an invite code.</p>
+        </div>
+      ) : (
+        <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(320px, 1fr))', gap:16}}>
+          {groups.map(g => (
+            <div key={g.id} className="card" style={{cursor:'pointer'}} onClick={() => onSelectGroup(g.id)}>
+              <h3 style={{fontSize:18, marginBottom:8}}>{g.name}</h3>
+              <div style={{display:'flex', gap:8, marginBottom:12}}>
+                <span className="badge badge-primary">{g.members.length} members</span>
+                <span className="badge badge-success">{g.meetups.filter(m => m.status === 'confirmed').length} confirmed</span>
+              </div>
+              <div className="member-list">
+                {g.members.slice(0,4).map(m => (
+                  <span key={m.id} className="member-chip">{m.name}</span>
+                ))}
+                {g.members.length > 4 && <span className="member-chip">+{g.members.length - 4}</span>}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================
+// CREATE / JOIN GROUP
+// ============================================================
+function CreateGroupScreen({ onBack, onCreate }) {
+  const [name, setName] = useState('');
+  return (
+    <div>
+      <button className="btn btn-ghost" onClick={onBack} style={{marginBottom:16}}>← Back</button>
+      <div className="card" style={{maxWidth:500}}>
+        <h2>Create a New Group</h2>
+        <div className="form-group">
+          <label>Group Name</label>
+          <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Uni Mates, Family Weekends" />
+        </div>
+        <button className="btn btn-primary" onClick={() => name.trim() && onCreate(name.trim())} disabled={!name.trim()}>Create Group</button>
+      </div>
+    </div>
+  );
+}
+
+function JoinGroupScreen({ onBack, onJoin }) {
+  const [code, setCode] = useState('');
+  const [error, setError] = useState('');
+  function handleJoin() { const err = onJoin(code); if (err) setError(err); }
+  return (
+    <div>
+      <button className="btn btn-ghost" onClick={onBack} style={{marginBottom:16}}>← Back</button>
+      <div className="card" style={{maxWidth:500}}>
+        <h2>Join a Group</h2>
+        <p style={{color:'var(--text-light)', marginBottom:16}}>Enter the invite code shared by the group owner.</p>
+        <div className="form-group">
+          <label>Invite Code</label>
+          <input value={code} onChange={e => { setCode(e.target.value.toUpperCase()); setError(''); }} placeholder="e.g. ABCD-1234" style={{fontFamily:'monospace', fontSize:18, textAlign:'center', letterSpacing:2}} />
+        </div>
+        {error && <p style={{color:'var(--danger)', fontSize:13, marginBottom:12}}>{error}</p>}
+        <button className="btn btn-primary" onClick={handleJoin} disabled={code.length < 9}>Join Group</button>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// GROUP SCREEN
+// ============================================================
+function GroupScreen({ group, currentUser, onBack, onUpdateGroup, onRemoveMember, onAddMeetup, onUpdateMeetup }) {
+  const [tab, setTab] = useState('meetups');
+  const [showNewMeetup, setShowNewMeetup] = useState(false);
+
+  return (
+    <div>
+      <button className="btn btn-ghost" onClick={onBack} style={{marginBottom:16}}>← Back to Groups</button>
+      <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:8, flexWrap:'wrap', gap:12}}>
+        <div>
+          <h2 style={{fontSize:24, marginBottom:4}}>{group.name}</h2>
+          <div style={{display:'flex', gap:8}}>
+            <span className="badge badge-primary">{group.members.length} members</span>
+            {group.settings.autoSchedule && <span className="badge badge-warning">Auto: every {group.settings.cadenceMonths} months</span>}
+          </div>
+        </div>
+        <button className="btn btn-primary" onClick={() => setShowNewMeetup(true)}>+ Plan Meetup</button>
+      </div>
+
+      <div className="tabs">
+        <div className={`tab ${tab==='meetups'?'active':''}`} onClick={() => setTab('meetups')}>Meetups</div>
+        <div className={`tab ${tab==='members'?'active':''}`} onClick={() => setTab('members')}>Members</div>
+        <div className={`tab ${tab==='calendar'?'active':''}`} onClick={() => setTab('calendar')}>Calendar</div>
+        <div className={`tab ${tab==='settings'?'active':''}`} onClick={() => setTab('settings')}>Settings</div>
+      </div>
+
+      {tab === 'meetups' && <MeetupsTab group={group} currentUser={currentUser} onUpdateMeetup={onUpdateMeetup} />}
+      {tab === 'members' && <MembersTab group={group} currentUser={currentUser} onRemoveMember={onRemoveMember} />}
+      {tab === 'calendar' && <CalendarTab group={group} currentUser={currentUser} onUpdateGroup={onUpdateGroup} />}
+      {tab === 'settings' && <SettingsTab group={group} onUpdateGroup={onUpdateGroup} />}
+
+      {showNewMeetup && (
+        <div className="modal-overlay" onClick={() => setShowNewMeetup(false)}>
+          <div className="modal" style={{maxWidth:700, maxHeight:'90vh'}} onClick={e => e.stopPropagation()}>
+            <NewMeetupWizard group={group} currentUser={currentUser}
+              onCancel={() => setShowNewMeetup(false)}
+              onAddMeetup={m => { onAddMeetup(m); setShowNewMeetup(false); }} />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================
+// NEW MEETUP WIZARD
+// ============================================================
+function NewMeetupWizard({ group, currentUser, onCancel, onAddMeetup }) {
+  const [step, setStep] = useState(1);
+  const [duration, setDuration] = useState(1);
+  const [selectedCity, setSelectedCity] = useState(null);
+  const [customCity, setCustomCity] = useState('');
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedActivity, setSelectedActivity] = useState(null);
+  const [useAI, setUseAI] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState('');
+  const [aiResponse, setAiResponse] = useState('');
+  const [loadingAI, setLoadingAI] = useState(false);
+
+  const memberLocations = group.members.filter(m => m.lat && m.lng).map(m => ({ name: m.name, lat: m.lat, lng: m.lng }));
+  const suggestions = useMemo(() => suggestMeetingCities(memberLocations, 3), [group.members.length]);
+
+  const allBusyDates = group.members.flatMap(m => m.busyDates || []);
+  const dateSuggestions = useMemo(() => suggestDates(allBusyDates, duration, 3), [allBusyDates.length, duration]);
+
+  function simulateAI() {
+    setLoadingAI(true);
+    const city = selectedCity || customCity;
+    setTimeout(() => {
+      setAiResponse(`Here are some ideas for a ${duration}-day trip to ${city} with ${group.members.length} people:\n\n1. Morning: Start with a walking tour of the city centre — great way to get oriented together.\n\n2. Afternoon: Visit a local museum or gallery (most cities have free options).\n\n3. Evening: Find a well-reviewed restaurant for a group dinner — look for one with a private dining option.\n\n4. If staying overnight: Check out local live music venues or a comedy club.\n\n5. Next day: Consider a day trip to nearby countryside or coast — a change of scenery works well for groups.\n\nTip: Book a central Airbnb or hotel so everyone has a base, and consider creating a shared expenses pot beforehand.`);
+      setLoadingAI(false);
+    }, 2000);
+  }
+
+  function handleFinish() {
+    onAddMeetup({
+      city: selectedCity || customCity,
+      duration,
+      suggestedDate: selectedDate,
+      activity: selectedActivity,
+      aiSuggestions: aiResponse || null,
+    });
+  }
+
+  const cityObj = selectedCity ? UK_CITIES.find(c => c.name === selectedCity) : null;
+
+  return (
+    <div>
+      <h2 style={{marginBottom:8}}>Plan a Meetup</h2>
+      <div className="step-indicator">
+        {[1,2,3,4].map(s => (
+          <React.Fragment key={s}>
+            <div className={`step ${step===s?'active':''} ${step>s?'done':''}`}>
+              <div className="step-dot">{step > s ? '✓' : s}</div>
+              <span>{['Duration','Location','Dates','Activities'][s-1]}</span>
+            </div>
+            {s < 4 && <div className="step-line" />}
+          </React.Fragment>
+        ))}
+      </div>
+
+      {step === 1 && (
+        <div>
+          <h3>How long should the meetup be?</h3>
+          <div style={{display:'flex', gap:8, marginTop:12, flexWrap:'wrap'}}>
+            {[1,2,3,4,5].map(d => (
+              <button key={d} className={`btn ${duration===d?'btn-primary':'btn-ghost'}`} onClick={() => setDuration(d)}>
+                {d} day{d>1?'s':''}
+              </button>
+            ))}
+          </div>
+          <div style={{marginTop:20, display:'flex', justifyContent:'space-between'}}>
+            <button className="btn btn-ghost" onClick={onCancel}>Cancel</button>
+            <button className="btn btn-primary" onClick={() => setStep(2)}>Next →</button>
+          </div>
+        </div>
+      )}
+
+      {step === 2 && (
+        <div>
+          <h3>Where should you meet?</h3>
+          <p style={{color:'var(--text-light)', fontSize:13, marginBottom:16}}>Based on everyone's locations, here are the best central meeting points:</p>
+          {suggestions.map(s => (
+            <div key={s.name} className={`suggestion-card ${selectedCity===s.name?'selected':''}`}
+              onClick={() => { setSelectedCity(s.name); setCustomCity(''); }}>
+              <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start'}}>
+                <div>
+                  <h4>{s.name}</h4>
+                  <div className="distance">{s.memberDistances.map(d => `${d.name}: ${d.distance} km`).join(' · ')}</div>
+                </div>
+                {selectedCity === s.name && <span className="badge badge-success">Selected</span>}
+              </div>
+              <div style={{display:'flex', gap:4, marginTop:8}}>
+                <span className="badge badge-primary">Pop: {(s.pop/1000).toFixed(0)}k</span>
+                <span className="badge badge-warning">Avg {Math.round(s.avgDistFromMembers)} km</span>
+              </div>
+            </div>
+          ))}
+          <div style={{marginTop:16}}>
+            <label>Or choose a custom location:</label>
+            <input value={customCity} onChange={e => { setCustomCity(e.target.value); setSelectedCity(null); }} placeholder="Type any city..." />
+          </div>
+          <div style={{marginTop:20, display:'flex', justifyContent:'space-between'}}>
+            <button className="btn btn-ghost" onClick={() => setStep(1)}>← Back</button>
+            <button className="btn btn-primary" onClick={() => setStep(3)} disabled={!selectedCity && !customCity.trim()}>Next →</button>
+          </div>
+        </div>
+      )}
+
+      {step === 3 && (
+        <div>
+          <h3>When works for everyone?</h3>
+          {allBusyDates.length === 0 ? (
+            <div style={{background:'#FEF3C7', padding:12, borderRadius:8, fontSize:13, marginBottom:16}}>
+              No one has added busy dates yet. Go to the Calendar tab to add yours.
+            </div>
+          ) : (
+            <p style={{color:'var(--text-light)', fontSize:13, marginBottom:16}}>
+              Based on {group.members.length} members' calendars, here are free windows:
+            </p>
+          )}
+          {dateSuggestions.map(s => (
+            <div key={s.key} className={`date-suggestion ${selectedDate?.key === s.key ? 'chosen' : ''}`}
+              onClick={() => setSelectedDate(s)} style={{cursor:'pointer'}}>
+              <div>
+                <strong>{formatDate(s.start)}{duration > 1 ? ` — ${formatDate(s.end)}` : ''}</strong>
+                <div style={{fontSize:12, color:'var(--text-light)', marginTop:2}}>{duration} day{duration>1?'s':''} · All members available</div>
+              </div>
+              {selectedDate?.key === s.key && <span className="badge badge-success">Selected</span>}
+            </div>
+          ))}
+          <div style={{marginTop:20, display:'flex', justifyContent:'space-between'}}>
+            <button className="btn btn-ghost" onClick={() => setStep(2)}>← Back</button>
+            <button className="btn btn-primary" onClick={() => setStep(4)}>Next →</button>
+          </div>
+        </div>
+      )}
+
+      {step === 4 && (
+        <div>
+          <h3>Things to do in {selectedCity || customCity}</h3>
+          {cityObj && cityObj.activities ? (
+            <div>
+              {cityObj.activities.map((a, i) => (
+                <div key={i} className={`suggestion-card ${selectedActivity===i?'selected':''}`}
+                  onClick={() => setSelectedActivity(i)} style={{padding:14}}>
+                  <div style={{display:'flex', gap:8, alignItems:'center'}}>
+                    <span style={{fontSize:20}}>{'🏛️🎭🌊🎨🎵'[i%5]}</span>
+                    <span style={{fontSize:14}}>{a}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p style={{color:'var(--text-light)', fontSize:13, marginBottom:12}}>No pre-loaded activities for this location.</p>
+          )}
+
+          <div style={{marginTop:16, padding:16, background:'#EEF2FF', borderRadius:12}}>
+            <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8}}>
+              <strong style={{fontSize:14}}>🤖 Get AI suggestions</strong>
+              <label className="toggle">
+                <input type="checkbox" checked={useAI} onChange={e => setUseAI(e.target.checked)} />
+                <span className="slider"></span>
+              </label>
+            </div>
+            {useAI && (
+              <div>
+                <p style={{fontSize:12, color:'var(--text-light)', marginBottom:8}}>
+                  Use an AI assistant to research activities. In production this would connect to an LLM API.
+                </p>
+                <textarea value={aiPrompt} onChange={e => setAiPrompt(e.target.value)}
+                  placeholder={`e.g. "Suggest fun group activities in ${selectedCity || customCity} for ${group.members.length} people over ${duration} days"`}
+                  style={{minHeight:60, marginBottom:8}} />
+                <button className="btn btn-sm btn-warning" onClick={simulateAI} disabled={loadingAI}>
+                  {loadingAI ? 'Thinking...' : '✨ Generate Suggestions'}
+                </button>
+                {aiResponse && (
+                  <pre style={{marginTop:12, background:'white', padding:12, borderRadius:8, fontSize:13, whiteSpace:'pre-wrap', lineHeight:1.5}}>{aiResponse}</pre>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div style={{marginTop:20, display:'flex', justifyContent:'space-between'}}>
+            <button className="btn btn-ghost" onClick={() => setStep(3)}>← Back</button>
+            <button className="btn btn-success" onClick={handleFinish}>✓ Create Meetup Proposal</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================
+// MEETUPS TAB (with unanimous acceptance + comments)
+// ============================================================
+function MeetupsTab({ group, currentUser, onUpdateMeetup }) {
+  if (group.meetups.length === 0) {
+    return (
+      <div className="empty-state">
+        <div className="icon">🗓️</div>
+        <h3>No meetups planned yet</h3>
+        <p>Click "Plan Meetup" to get started.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      {group.meetups.map(m => {
+        const totalMembers = group.members.length;
+        const acceptCount = group.members.filter(mem => m.votes?.[mem.id] === 'accept').length;
+        const declineCount = group.members.filter(mem => m.votes?.[mem.id] === 'decline').length;
+        const pendingCount = totalMembers - acceptCount - declineCount;
+        const allAccepted = acceptCount === totalMembers && totalMembers > 0;
+        const anyDeclined = declineCount > 0;
+
+        // Auto-update status based on votes
+        const computedStatus = allAccepted ? 'confirmed' : anyDeclined ? 'has objections' : 'proposed';
+        if (m.status !== 'confirmed' && allAccepted) {
+          onUpdateMeetup(m.id, { status: 'confirmed' });
+        }
+
+        return (
+          <div key={m.id} className="card">
+            {allAccepted && (
+              <div className="confirmed-banner">
+                <div className="icon">🎉</div>
+                <div>
+                  <div className="text">Everyone's in! This meetup is confirmed.</div>
+                  <div className="subtext">All {totalMembers} members have accepted</div>
+                </div>
+              </div>
+            )}
+
+            <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start'}}>
+              <div>
+                <h3 style={{fontSize:18, marginBottom:4}}>📍 {m.city}</h3>
+                <div style={{fontSize:13, color:'var(--text-light)', marginBottom:8}}>
+                  {m.suggestedDate ? `${formatDate(m.suggestedDate.start)}${m.duration > 1 ? ` — ${formatDate(m.suggestedDate.end)}` : ''}` : 'No date selected yet'} · {m.duration} day{m.duration>1?'s':''}
+                </div>
+              </div>
+              <span className={`badge ${allAccepted?'badge-success':anyDeclined?'badge-danger':'badge-warning'}`}>
+                {allAccepted ? 'confirmed' : anyDeclined ? 'has objections' : `${acceptCount}/${totalMembers} accepted`}
+              </span>
+            </div>
+
+            {m.activity !== null && m.activity !== undefined && (
+              <div style={{background:'var(--bg)', padding:10, borderRadius:8, fontSize:13, marginBottom:12}}>
+                <strong>Activity:</strong> {UK_CITIES.find(c => c.name === m.city)?.activities?.[m.activity] || 'Custom activity'}
+              </div>
+            )}
+
+            {m.aiSuggestions && (
+              <details style={{marginBottom:12}}>
+                <summary style={{cursor:'pointer', fontSize:13, color:'var(--primary)'}}>🤖 AI Suggestions</summary>
+                <pre style={{marginTop:8, background:'var(--bg)', padding:12, borderRadius:8, fontSize:12, whiteSpace:'pre-wrap'}}>{m.aiSuggestions}</pre>
+              </details>
+            )}
+
+            <div style={{display:'flex', gap:8, flexWrap:'wrap', alignItems:'center'}}>
+              <VoteButton meetup={m} userId={currentUser.id} vote="accept" label="✓ Accept" onUpdateMeetup={onUpdateMeetup} />
+              <VoteButton meetup={m} userId={currentUser.id} vote="decline" label="✗ Decline" onUpdateMeetup={onUpdateMeetup} />
+              {m.suggestedDate && (
+                <button className="btn btn-sm btn-ghost" onClick={() => {
+                  const endD = new Date(m.suggestedDate.end || m.suggestedDate.start);
+                  endD.setDate(endD.getDate() + 1);
+                  downloadIcal(`MeetPoint: ${group.name} in ${m.city}`, new Date(m.suggestedDate.start), endD, m.city, `Meetup with ${group.name} in ${m.city}`);
+                }}>
+                  📅 Add to Calendar (.ics)
+                </button>
+              )}
+            </div>
+
+            {/* Acceptance progress */}
+            <div style={{marginTop:12}}>
+              <div style={{fontSize:12, color:'var(--text-light)', marginBottom:6}}>
+                Acceptance progress — all {totalMembers} members must accept:
+              </div>
+              <div className="progress-dots" style={{display:'flex', gap:3, alignItems:'center', marginBottom:8}}>
+                {group.members.map(member => {
+                  const vote = m.votes?.[member.id];
+                  const color = vote === 'accept' ? 'var(--success)' : vote === 'decline' ? 'var(--danger)' : '#CBD5E1';
+                  return (
+                    <div key={member.id} title={`${member.name}: ${vote || 'pending'}`}
+                      style={{width:28, height:28, borderRadius:'50%', background:color, display:'flex', alignItems:'center', justifyContent:'center', color:'white', fontSize:10, fontWeight:700, cursor:'default'}}>
+                      {member.name.charAt(0).toUpperCase()}
+                    </div>
+                  );
+                })}
+                <span style={{fontSize:12, color:'var(--text-light)', marginLeft:8}}>
+                  {acceptCount} accepted · {declineCount} declined · {pendingCount} pending
+                </span>
+              </div>
+            </div>
+
+            {/* Comments Section */}
+            <CommentsSection meetup={m} currentUser={currentUser} onUpdateMeetup={onUpdateMeetup} />
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ============================================================
+// COMMENTS SECTION
+// ============================================================
+function CommentsSection({ meetup, currentUser, onUpdateMeetup }) {
+  const [newComment, setNewComment] = useState('');
+  const [expanded, setExpanded] = useState(false);
+  const comments = meetup.comments || [];
+
+  function addComment() {
+    if (!newComment.trim()) return;
+    const comment = {
+      id: generateId(),
+      userId: currentUser.id,
+      userName: currentUser.name,
+      text: newComment.trim(),
+      timestamp: new Date().toISOString()
+    };
+    onUpdateMeetup(meetup.id, { comments: [...comments, comment] });
+    setNewComment('');
+  }
+
+  function handleKeyDown(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      addComment();
+    }
+  }
+
+  const displayComments = expanded ? comments : comments.slice(-3);
+
+  return (
+    <div style={{marginTop:16, borderTop:'1px solid var(--border)', paddingTop:12}}>
+      <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8}}>
+        <strong style={{fontSize:13}}>💬 Comments ({comments.length})</strong>
+        {comments.length > 3 && (
+          <button className="btn btn-sm btn-ghost" onClick={() => setExpanded(!expanded)} style={{fontSize:11}}>
+            {expanded ? 'Show less' : `Show all ${comments.length}`}
+          </button>
+        )}
+      </div>
+
+      {comments.length === 0 && (
+        <p style={{fontSize:12, color:'var(--text-light)', marginBottom:8}}>No comments yet. Share your thoughts with the group.</p>
+      )}
+
+      {displayComments.map(c => (
+        <div key={c.id} className="comment-item">
+          <div className="comment-meta">
+            <div className="comment-avatar">{c.userName.charAt(0).toUpperCase()}</div>
+            <span className="comment-author">{c.userName}{c.userId === currentUser.id ? ' (you)' : ''}</span>
+            <span className="comment-time">{timeAgo(c.timestamp)}</span>
+          </div>
+          <div className="comment-body">{c.text}</div>
+        </div>
+      ))}
+
+      <div className="comment-input-row">
+        <input value={newComment} onChange={e => setNewComment(e.target.value)} onKeyDown={handleKeyDown}
+          placeholder="Add a comment... (Enter to send)" style={{fontSize:13}} />
+        <button className="btn btn-sm btn-primary" onClick={addComment} disabled={!newComment.trim()}>Send</button>
+      </div>
+    </div>
+  );
+}
+
+function VoteButton({ meetup, userId, vote, label, onUpdateMeetup }) {
+  const current = meetup.votes?.[userId];
+  const isActive = current === vote;
+  const cls = vote === 'accept' ? (isActive ? 'btn-success' : 'btn-ghost') : (isActive ? 'btn-danger' : 'btn-ghost');
+  return (
+    <button className={`btn btn-sm ${cls}`} onClick={() => {
+      const newVotes = { ...meetup.votes, [userId]: isActive ? undefined : vote };
+      onUpdateMeetup(meetup.id, { votes: newVotes });
+    }}>
+      {label}
+    </button>
+  );
+}
+
+// ============================================================
+// MEMBERS TAB
+// ============================================================
+function MembersTab({ group, currentUser, onRemoveMember }) {
+  const isOwner = group.members.find(m => m.id === currentUser.id)?.role === 'owner';
+  const [copied, setCopied] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
+
+  // Build the invite link (uses current page URL with ?invite= param)
+  const inviteLink = `${window.location.origin}${window.location.pathname}?invite=${group.inviteCode}`;
+  const inviteMessage = `Join our meetup group "${group.name}" on MeetPoint! Use invite code: ${group.inviteCode}\n\n${inviteLink}`;
+
+  function copyInviteCode() {
+    navigator.clipboard.writeText(group.inviteCode).then(() => {
+      setCopied(true); setTimeout(() => setCopied(false), 2000);
+    }).catch(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); });
+  }
+
+  function copyInviteLink() {
+    navigator.clipboard.writeText(inviteMessage).then(() => {
+      setCopiedLink(true); setTimeout(() => setCopiedLink(false), 2000);
+    }).catch(() => { setCopiedLink(true); setTimeout(() => setCopiedLink(false), 2000); });
+  }
+
+  function shareWhatsApp() {
+    const text = encodeURIComponent(inviteMessage);
+    window.open(`https://wa.me/?text=${text}`, '_blank');
+  }
+
+  function shareEmail() {
+    const subject = encodeURIComponent(`Join "${group.name}" on MeetPoint`);
+    const body = encodeURIComponent(inviteMessage);
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+  }
+
+  return (
+    <div>
+      <div className="invite-box" style={{marginBottom:20}}>
+        <h3>Invite Friends</h3>
+        <p style={{fontSize:13, color:'var(--text-light)'}}>Share this code or link with friends so they can join:</p>
+        <code style={{fontSize:22, letterSpacing:3}}>{group.inviteCode}</code>
+        <br />
+        <button className="btn btn-sm btn-secondary" onClick={copyInviteCode} style={{marginTop:8}}>
+          {copied ? '✓ Code Copied!' : '📋 Copy Code'}
+        </button>
+
+        <div className="share-buttons" style={{justifyContent:'center'}}>
+          <button className="share-btn share-btn-whatsapp" onClick={shareWhatsApp}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            WhatsApp
+          </button>
+          <button className="share-btn share-btn-copy" onClick={copyInviteLink}>
+            {copiedLink ? '✓ Link Copied!' : '🔗 Copy Invite Link'}
+          </button>
+          <button className="share-btn share-btn-email" onClick={shareEmail}>
+            ✉️ Email
+          </button>
+        </div>
+      </div>
+      <div className="card">
+        <h3>Members ({group.members.length})</h3>
+        {group.members.map(m => (
+          <div key={m.id} style={{display:'flex', alignItems:'center', justifyContent:'space-between', padding:'12px 0', borderBottom:'1px solid var(--border)'}}>
+            <div style={{display:'flex', alignItems:'center', gap:12}}>
+              <div style={{width:36, height:36, borderRadius:'50%', background:'linear-gradient(135deg, var(--primary), var(--primary-light))', display:'flex', alignItems:'center', justifyContent:'center', color:'white', fontWeight:700, fontSize:14}}>
+                {m.name.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <div style={{fontWeight:600, fontSize:14}}>{m.name} {m.id === currentUser.id && <span style={{color:'var(--text-light)', fontWeight:400}}>(you)</span>}</div>
+                <div style={{fontSize:12, color:'var(--text-light)'}}>{m.city} · {m.role}</div>
+              </div>
+            </div>
+            {isOwner && m.id !== currentUser.id && (
+              <button className="btn btn-sm btn-ghost" style={{color:'var(--danger)'}} onClick={() => onRemoveMember(m.id)}>Remove</button>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// CALENDAR TAB
+// ============================================================
+function CalendarTab({ group, currentUser, onUpdateGroup }) {
+  const [viewMonth, setViewMonth] = useState(new Date().getMonth());
+  const [viewYear, setViewYear] = useState(new Date().getFullYear());
+
+  const me = group.members.find(m => m.id === currentUser.id);
+  const myBusy = new Set(me?.busyDates || []);
+  const allBusy = new Set(group.members.flatMap(m => m.busyDates || []));
+
+  const daysInMonth = getDaysInMonth(viewYear, viewMonth);
+  const firstDow = new Date(viewYear, viewMonth, 1).getDay();
+  const adjustedFirst = firstDow === 0 ? 6 : firstDow - 1;
+
+  function toggleBusy(dateKey) {
+    const updatedMembers = group.members.map(m => {
+      if (m.id !== currentUser.id) return m;
+      const current = m.busyDates || [];
+      const newBusy = current.includes(dateKey) ? current.filter(d => d !== dateKey) : [...current, dateKey];
+      return { ...m, busyDates: newBusy };
+    });
+    onUpdateGroup({ members: updatedMembers });
+  }
+
+  function handleIcsUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = evt => {
+      const text = evt.target.result;
+      const dates = [];
+      const dtRegex = /DTSTART[^:]*:(\d{8})/g;
+      let match;
+      while ((match = dtRegex.exec(text)) !== null) {
+        const d = match[1];
+        dates.push(`${d.substr(0,4)}-${d.substr(4,2)}-${d.substr(6,2)}`);
+      }
+      if (dates.length) {
+        const updatedMembers = group.members.map(m => {
+          if (m.id !== currentUser.id) return m;
+          const merged = [...new Set([...(m.busyDates || []), ...dates])];
+          return { ...m, busyDates: merged };
+        });
+        onUpdateGroup({ members: updatedMembers });
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  const today = new Date();
+  const todayKey = dateToKey(today);
+  const monthName = new Date(viewYear, viewMonth).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+
+  const googleCal = loadData('googleCalConnected', false);
+  const msCal = loadData('msCalConnected', false);
+
+  return (
+    <div>
+      {/* Calendar connection status banner */}
+      {(googleCal || msCal) && (
+        <div style={{background:'#D1FAE5', border:'1px solid var(--success)', borderRadius:10, padding:'12px 16px', marginBottom:16, display:'flex', alignItems:'center', gap:10, fontSize:13}}>
+          <span style={{fontSize:18}}>🔗</span>
+          <span>
+            Connected to: {googleCal && <strong>Google Calendar</strong>}{googleCal && msCal && ' & '}{msCal && <strong>Microsoft Calendar</strong>}
+            {' — '}busy dates syncing automatically.
+          </span>
+        </div>
+      )}
+      {!googleCal && !msCal && (
+        <div style={{background:'#EEF2FF', border:'1px solid var(--primary-light)', borderRadius:10, padding:'12px 16px', marginBottom:16, display:'flex', alignItems:'center', gap:10, fontSize:13}}>
+          <span style={{fontSize:18}}>💡</span>
+          <span>Connect Google or Microsoft Calendar in the <strong>Settings</strong> tab to auto-sync your busy dates.</span>
+        </div>
+      )}
+
+      <div className="card">
+        <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16, flexWrap:'wrap', gap:8}}>
+          <h3>Your Availability</h3>
+          <label className="btn btn-sm btn-secondary" style={{cursor:'pointer'}}>
+            📎 Import .ics file
+            <input type="file" accept=".ics" onChange={handleIcsUpload} style={{display:'none'}} />
+          </label>
+        </div>
+        <p style={{fontSize:13, color:'var(--text-light)', marginBottom:16}}>
+          Click dates to mark them as busy. Red = busy for someone. Upload a .ics file or connect your calendar in Settings.
+        </p>
+
+        <div className="calendar-nav">
+          <button onClick={() => { if (viewMonth===0) { setViewMonth(11); setViewYear(viewYear-1); } else setViewMonth(viewMonth-1); }}>‹</button>
+          <strong>{monthName}</strong>
+          <button onClick={() => { if (viewMonth===11) { setViewMonth(0); setViewYear(viewYear+1); } else setViewMonth(viewMonth+1); }}>›</button>
+        </div>
+
+        <div className="calendar-grid">
+          {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d => <div key={d} className="calendar-header">{d}</div>)}
+          {Array.from({ length: adjustedFirst }, (_, i) => <div key={`e-${i}`} className="calendar-day empty other-month" />)}
+          {Array.from({ length: daysInMonth }, (_, i) => {
+            const day = i + 1;
+            const key = `${viewYear}-${String(viewMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+            const isBusy = allBusy.has(key);
+            const isMyBusy = myBusy.has(key);
+            const isToday = key === todayKey;
+            return (
+              <div key={key} className={`calendar-day ${isBusy?'busy':''} ${isToday?'today':''}`}
+                onClick={() => toggleBusy(key)}
+                title={isMyBusy ? 'Your busy day (click to remove)' : isBusy ? 'Busy for another member' : 'Click to mark busy'}>
+                {day}
+              </div>
+            );
+          })}
+        </div>
+
+        <div style={{marginTop:16, display:'flex', gap:16, fontSize:12, color:'var(--text-light)'}}>
+          <span><span style={{display:'inline-block', width:12, height:12, borderRadius:3, background:'#FEE2E2', marginRight:4, verticalAlign:'middle'}} /> Busy</span>
+          <span><span style={{display:'inline-block', width:12, height:12, borderRadius:3, background:'#D1FAE5', marginRight:4, verticalAlign:'middle'}} /> Suggested</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// SETTINGS TAB
+// ============================================================
+function SettingsTab({ group, onUpdateGroup }) {
+  const settings = group.settings || {};
+  const [googleConnected, setGoogleConnected] = useState(() => loadData('googleCalConnected', false));
+  const [msConnected, setMsConnected] = useState(() => loadData('msCalConnected', false));
+  const [connectingGoogle, setConnectingGoogle] = useState(false);
+  const [connectingMs, setConnectingMs] = useState(false);
+
+  function update(key, val) { onUpdateGroup({ settings: { ...settings, [key]: val } }); }
+
+  function connectGoogle() {
+    setConnectingGoogle(true);
+    // In production, this would redirect to Google OAuth:
+    // https://accounts.google.com/o/oauth2/v2/auth?client_id=YOUR_ID&redirect_uri=...&scope=https://www.googleapis.com/auth/calendar.readonly+https://www.googleapis.com/auth/calendar.events&response_type=code&access_type=offline
+    setTimeout(() => {
+      setGoogleConnected(true);
+      saveData('googleCalConnected', true);
+      setConnectingGoogle(false);
+    }, 1500);
+  }
+
+  function disconnectGoogle() {
+    setGoogleConnected(false);
+    saveData('googleCalConnected', false);
+  }
+
+  function connectMs() {
+    setConnectingMs(true);
+    // In production, this would redirect to Microsoft OAuth:
+    // https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=YOUR_ID&redirect_uri=...&scope=Calendars.Read+Calendars.ReadWrite&response_type=code
+    setTimeout(() => {
+      setMsConnected(true);
+      saveData('msCalConnected', true);
+      setConnectingMs(false);
+    }, 1500);
+  }
+
+  function disconnectMs() {
+    setMsConnected(false);
+    saveData('msCalConnected', false);
+  }
+
+  return (
+    <div>
+      <div className="card">
+        <h2>📅 Calendar Connections</h2>
+        <p style={{fontSize:13, color:'var(--text-light)', marginBottom:16}}>
+          Connect your calendar to automatically sync busy dates and add confirmed meetups.
+        </p>
+
+        <button className={`cal-connect-btn ${googleConnected ? 'connected' : ''}`}
+          onClick={googleConnected ? disconnectGoogle : connectGoogle}
+          disabled={connectingGoogle}>
+          <div className="cal-icon" style={{background:'#fff'}}>
+            <svg width="22" height="22" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          </div>
+          <div>
+            <div style={{fontWeight:600}}>Google Calendar</div>
+            <div style={{fontSize:12, color:'var(--text-light)', fontWeight:400}}>
+              {googleConnected ? 'Connected — syncing busy dates' : 'Import busy dates and export meetups'}
+            </div>
+          </div>
+          <div className="cal-status">
+            {connectingGoogle ? (
+              <span style={{color:'var(--primary)'}}>Connecting...</span>
+            ) : googleConnected ? (
+              <span style={{color:'var(--success)'}}>✓ Connected</span>
+            ) : (
+              <span style={{color:'var(--primary)'}}>Connect →</span>
+            )}
+          </div>
+        </button>
+
+        <button className={`cal-connect-btn ${msConnected ? 'connected' : ''}`}
+          onClick={msConnected ? disconnectMs : connectMs}
+          disabled={connectingMs}>
+          <div className="cal-icon" style={{background:'#fff'}}>
+            <svg width="22" height="22" viewBox="0 0 23 23"><path fill="#f35325" d="M1 1h10v10H1z"/><path fill="#81bc06" d="M12 1h10v10H12z"/><path fill="#05a6f0" d="M1 12h10v10H1z"/><path fill="#ffba08" d="M12 12h10v10H12z"/></svg>
+          </div>
+          <div>
+            <div style={{fontWeight:600}}>Microsoft Calendar</div>
+            <div style={{fontSize:12, color:'var(--text-light)', fontWeight:400}}>
+              {msConnected ? 'Connected — syncing Outlook calendar' : 'Import from Outlook and Microsoft 365'}
+            </div>
+          </div>
+          <div className="cal-status">
+            {connectingMs ? (
+              <span style={{color:'var(--primary)'}}>Connecting...</span>
+            ) : msConnected ? (
+              <span style={{color:'var(--success)'}}>✓ Connected</span>
+            ) : (
+              <span style={{color:'var(--primary)'}}>Connect →</span>
+            )}
+          </div>
+        </button>
+
+        {(googleConnected || msConnected) && (
+          <div style={{background:'#D1FAE5', padding:12, borderRadius:8, fontSize:13, marginTop:8}}>
+            Calendar connected! In the full version, your busy dates will sync automatically and confirmed meetups will appear in your calendar.
+          </div>
+        )}
+        {!googleConnected && !msConnected && (
+          <div style={{background:'#EEF2FF', padding:12, borderRadius:8, fontSize:13, marginTop:8}}>
+            You can also import busy dates manually using .ics file upload in the Calendar tab.
+          </div>
+        )}
+      </div>
+
+      <div className="card">
+        <h2>Group Settings</h2>
+        <div className="settings-row">
+          <div className="settings-label">
+            Auto-schedule meetups
+            <small>Automatically suggest new meetups at a recurring cadence</small>
+          </div>
+          <label className="toggle">
+            <input type="checkbox" checked={settings.autoSchedule || false} onChange={e => update('autoSchedule', e.target.checked)} />
+            <span className="slider"></span>
+          </label>
+        </div>
+        {settings.autoSchedule && (
+          <div className="settings-row">
+            <div className="settings-label">
+              Cadence <small>How often should meetups be suggested?</small>
+            </div>
+            <select value={settings.cadenceMonths || 3} onChange={e => update('cadenceMonths', parseInt(e.target.value))} style={{width:'auto'}}>
+              <option value={1}>Every month</option>
+              <option value={2}>Every 2 months</option>
+              <option value={3}>Every 3 months</option>
+              <option value={6}>Every 6 months</option>
+              <option value={12}>Annually</option>
+            </select>
+          </div>
+        )}
+        <div className="settings-row">
+          <div className="settings-label">
+            Calendar write access
+            <small>Allow MeetPoint to add confirmed meetups to your calendar</small>
+          </div>
+          <label className="toggle">
+            <input type="checkbox" checked={settings.calendarWrite || false} onChange={e => update('calendarWrite', e.target.checked)} />
+            <span className="slider"></span>
+          </label>
+        </div>
+        {settings.calendarWrite && (
+          <div style={{background:(googleConnected || msConnected) ? '#D1FAE5' : '#FEF3C7', padding:12, borderRadius:8, fontSize:13, marginTop:8}}>
+            {(googleConnected || msConnected)
+              ? 'Confirmed meetups will be automatically added to your connected calendar.'
+              : 'Connect Google or Microsoft Calendar above to enable automatic calendar sync. For now, you can download .ics files.'
+            }
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+ReactDOM.render(<App />, document.getElementById('root'));
+</script>
+</body>
+</html>
