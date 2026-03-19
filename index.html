@@ -921,6 +921,7 @@ function App() {
           <div onClick={() => setModal('profile')} style={{cursor:'pointer'}} title="Edit profile">
             <Avatar user={currentUser} size={32} fontSize={13} />
           </div>
+          <button onClick={() => { if (confirm('Log out? Your data will be cleared from this browser.')) { localStorage.removeItem('meetpoint_currentUser'); localStorage.removeItem('meetpoint_groups'); setCurrentUser(null); setGroups([]); setActiveGroupId(null); setView('home'); setShowSplash(true); } }} style={{background:'rgba(255,255,255,0.1)', border:'1px solid rgba(255,255,255,0.2)', padding:'6px 12px', fontSize:'12px'}}>Log out</button>
         </div>
       </header>
 
