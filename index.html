@@ -1204,11 +1204,16 @@ function Avatar({ user, size, fontSize }) {
 // SETUP SCREEN (with geolocation)
 // ============================================================
 function SetupScreen({ onComplete }) {
+  const [step, setStep] = useState(1);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [profileImage, setProfileImage] = useState('');
   const [city, setCity] = useState('');
   const [suggestions, setSuggestions] = useState([]);
+  const [googleCal, setGoogleCal] = useState(false);
+  const [msCal, setMsCal] = useState(false);
+  const [icsFile, setIcsFile] = useState(null);
+  const [busyDates, setBusyDates] = useState([]);
   const geo = useGeolocation();
 
   useEffect(() => {
@@ -1233,81 +1238,218 @@ function SetupScreen({ onComplete }) {
     reader.readAsDataURL(file);
   }
 
-  function submit() {
-    const found = findCityByName(city);
-    if (!name.trim() || !found) return;
-    onComplete({ id: generateId(), name: name.trim(), email: email.trim(), profileImage, city: found.name, lat: found.lat, lng: found.lng, busyDates: [] });
+  function handleIcsUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    setIcsFile(file.name);
+    const reader = new FileReader();
+    reader.onload = evt => {
+      const dates = parseICS(evt.target.result);
+      setBusyDates(dates);
+    };
+    reader.readAsText(file);
   }
 
-  // Preview user for avatar
+  function goToStep2() {
+    const found = findCityByName(city);
+    if (!name.trim() || !found) return;
+    setStep(2);
+  }
+
+  function finish() {
+    const found = findCityByName(city);
+    if (!name.trim() || !found) return;
+    onComplete({ id: generateId(), name: name.trim(), email: email.trim(), profileImage, city: found.name, lat: found.lat, lng: found.lng, busyDates, googleCal, msCal });
+  }
+
+  function simulateGoogleAuth() {
+    setGoogleCal(true);
+    setBusyDates(prev => {
+      const simDates = [];
+      const now = new Date();
+      for (let i = 0; i < 5; i++) {
+        const d = new Date(now);
+        d.setDate(d.getDate() + Math.floor(Math.random() * 60) + 1);
+        simDates.push(d.toISOString().split('T')[0]);
+      }
+      return [...new Set([...prev, ...simDates])];
+    });
+  }
+
+  function simulateMsAuth() {
+    setMsCal(true);
+    setBusyDates(prev => {
+      const simDates = [];
+      const now = new Date();
+      for (let i = 0; i < 4; i++) {
+        const d = new Date(now);
+        d.setDate(d.getDate() + Math.floor(Math.random() * 60) + 1);
+        simDates.push(d.toISOString().split('T')[0]);
+      }
+      return [...new Set([...prev, ...simDates])];
+    });
+  }
+
   const previewUser = { name: name || '?', email, profileImage };
 
   return (
     <div style={{display:'flex', alignItems:'center', justifyContent:'center', minHeight:'100vh', background:'linear-gradient(135deg, #4F46E5, #7C3AED)'}}>
-      <div className="card" style={{maxWidth:450, width:'90%'}}>
+      <div className="card" style={{maxWidth:480, width:'90%'}}>
         <div style={{textAlign:'center', marginBottom:24}}>
           <div style={{fontSize:48, marginBottom:8}}>📍</div>
           <h1 style={{fontSize:28, marginBottom:4}}>MeetPoint</h1>
           <p style={{color:'var(--text-light)'}}>Plan meetups with friends, effortlessly</p>
         </div>
 
-        {/* Avatar preview + upload */}
-        <div style={{display:'flex', flexDirection:'column', alignItems:'center', marginBottom:20}}>
-          <div style={{position:'relative', cursor:'pointer'}} onClick={() => document.getElementById('setup-avatar-upload').click()}>
-            <Avatar user={previewUser} size={80} fontSize={32} />
-            <div style={{position:'absolute', bottom:-2, right:-2, width:28, height:28, borderRadius:'50%', background:'var(--primary)', border:'2px solid white', display:'flex', alignItems:'center', justifyContent:'center', color:'white', fontSize:14}}>+</div>
+        {/* Step indicator */}
+        <div style={{display:'flex', alignItems:'center', justifyContent:'center', gap:8, marginBottom:28}}>
+          <div style={{display:'flex', alignItems:'center', gap:6}}>
+            <div style={{width:28, height:28, borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:700, background: step >= 1 ? 'var(--primary)' : 'var(--border)', color: step >= 1 ? 'white' : 'var(--text-light)', border:'2px solid ' + (step >= 1 ? 'var(--primary)' : 'var(--border)')}}>1</div>
+            <span style={{fontSize:13, fontWeight: step === 1 ? 600 : 400, color: step === 1 ? 'var(--primary)' : 'var(--text-light)'}}>Your Details</span>
           </div>
-          <input id="setup-avatar-upload" type="file" accept="image/*" onChange={handleImageUpload} style={{display:'none'}} />
-          <span style={{fontSize:12, color:'var(--text-light)', marginTop:6}}>Tap to upload a photo</span>
+          <div style={{width:40, height:2, background: step >= 2 ? 'var(--primary)' : 'var(--border)'}}></div>
+          <div style={{display:'flex', alignItems:'center', gap:6}}>
+            <div style={{width:28, height:28, borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:700, background: step >= 2 ? 'var(--primary)' : 'var(--border)', color: step >= 2 ? 'white' : 'var(--text-light)', border:'2px solid ' + (step >= 2 ? 'var(--primary)' : 'var(--border)')}}>2</div>
+            <span style={{fontSize:13, fontWeight: step === 2 ? 600 : 400, color: step === 2 ? 'var(--primary)' : 'var(--text-light)'}}>Calendar</span>
+          </div>
         </div>
 
-        <div className="form-group">
-          <label>Your name</label>
-          <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Alex" />
-        </div>
-        <div className="form-group">
-          <label>Email <span style={{fontWeight:400, color:'var(--text-light)'}}>(optional — enables Gravatar)</span></label>
-          <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="e.g. alex@example.com" />
-          {email && !profileImage && (
-            <div style={{fontSize:11, color:'var(--text-light)', marginTop:4}}>
-              If you have a <a href="https://gravatar.com" target="_blank" rel="noopener" style={{color:'var(--primary)'}}>Gravatar</a> linked to this email, it will be used as your profile picture.
+        {step === 1 && (
+          <div>
+            {/* Avatar preview + upload */}
+            <div style={{display:'flex', flexDirection:'column', alignItems:'center', marginBottom:20}}>
+              <div style={{position:'relative', cursor:'pointer'}} onClick={() => document.getElementById('setup-avatar-upload').click()}>
+                <Avatar user={previewUser} size={80} fontSize={32} />
+                <div style={{position:'absolute', bottom:-2, right:-2, width:28, height:28, borderRadius:'50%', background:'var(--primary)', border:'2px solid white', display:'flex', alignItems:'center', justifyContent:'center', color:'white', fontSize:14}}>+</div>
+              </div>
+              <input id="setup-avatar-upload" type="file" accept="image/*" onChange={handleImageUpload} style={{display:'none'}} />
+              <span style={{fontSize:12, color:'var(--text-light)', marginTop:6}}>Tap to upload a photo</span>
             </div>
-          )}
-        </div>
-        <div className="form-group" style={{position:'relative'}}>
-          <label>Your nearest city (UK)</label>
-          <div className="city-input-wrap">
-            <input value={city} onChange={e => handleCityInput(e.target.value)} placeholder="Start typing a city..." />
-            <button className={`geo-btn-inline ${geo.status === 'loading' ? 'loading' : ''}`}
-              onClick={geo.detect} disabled={geo.status === 'loading'}
-              title="Use my location">
-              📍
+
+            <div className="form-group">
+              <label>Your name</label>
+              <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Alex" />
+            </div>
+            <div className="form-group">
+              <label>Email <span style={{fontWeight:400, color:'var(--text-light)'}}>(optional — enables Gravatar)</span></label>
+              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="e.g. alex@example.com" />
+              {email && !profileImage && (
+                <div style={{fontSize:11, color:'var(--text-light)', marginTop:4}}>
+                  If you have a <a href="https://gravatar.com" target="_blank" rel="noopener" style={{color:'var(--primary)'}}>Gravatar</a> linked to this email, it will be used as your profile picture.
+                </div>
+              )}
+            </div>
+            <div className="form-group" style={{position:'relative'}}>
+              <label>Your nearest city (UK)</label>
+              <div className="city-input-wrap">
+                <input value={city} onChange={e => handleCityInput(e.target.value)} placeholder="Start typing a city..." />
+                <button className={`geo-btn-inline ${geo.status === 'loading' ? 'loading' : ''}`}
+                  onClick={geo.detect} disabled={geo.status === 'loading'}
+                  title="Use my location">
+                  📍
+                </button>
+              </div>
+              {suggestions.length > 0 && (
+                <div style={{position:'absolute', top:'100%', left:0, right:0, background:'white', border:'1px solid var(--border)', borderRadius:8, zIndex:10, boxShadow:'0 4px 12px rgba(0,0,0,0.1)'}}>
+                  {suggestions.map(s => (
+                    <div key={s.name} onClick={() => { setCity(s.name); setSuggestions([]); }}
+                      style={{padding:'10px 14px', cursor:'pointer', fontSize:14, borderBottom:'1px solid var(--border)'}}>
+                      {s.name}
+                    </div>
+                  ))}
+                </div>
+              )}
+              {geo.status === 'success' && geo.city && (
+                <div className="geo-status" style={{background:'#D1FAE5', color:'#065F46'}}>
+                  Detected: {geo.city.name}
+                </div>
+              )}
+              {geo.status === 'error' && (
+                <div className="geo-status" style={{background:'#FEE2E2', color:'#991B1B'}}>
+                  {geo.error} You can still type your city manually.
+                </div>
+              )}
+            </div>
+            <button className="btn btn-primary" style={{width:'100%'}} onClick={goToStep2} disabled={!name.trim() || !findCityByName(city)}>
+              Next — Connect Calendar →
             </button>
           </div>
-          {suggestions.length > 0 && (
-            <div style={{position:'absolute', top:'100%', left:0, right:0, background:'white', border:'1px solid var(--border)', borderRadius:8, zIndex:10, boxShadow:'0 4px 12px rgba(0,0,0,0.1)'}}>
-              {suggestions.map(s => (
-                <div key={s.name} onClick={() => { setCity(s.name); setSuggestions([]); }}
-                  style={{padding:'10px 14px', cursor:'pointer', fontSize:14, borderBottom:'1px solid var(--border)'}}>
-                  {s.name}
+        )}
+
+        {step === 2 && (
+          <div>
+            <div style={{background:'#EEF2FF', borderRadius:12, padding:16, marginBottom:24, textAlign:'center'}}>
+              <div style={{fontSize:32, marginBottom:8}}>📅</div>
+              <p style={{fontSize:14, fontWeight:600, color:'var(--text)', marginBottom:4}}>Connect your calendar</p>
+              <p style={{fontSize:13, color:'var(--text-light)', lineHeight:1.6}}>
+                This helps MeetPoint find dates when everyone's free. We'll check for busy dates so the group can pick the perfect weekend.
+              </p>
+            </div>
+
+            <button className={`cal-connect-btn ${googleCal ? 'connected' : ''}`}
+              onClick={simulateGoogleAuth}>
+              <div className="cal-icon" style={{background:'#fff', border:'1px solid #ddd'}}>
+                <span style={{fontSize:20}}>🔵</span>
+              </div>
+              <div>
+                <div style={{fontWeight:600}}>Google Calendar</div>
+                <div style={{fontSize:12, color:'var(--text-light)'}}>
+                  {googleCal ? 'Connected — busy dates synced' : 'Connect via Google OAuth'}
                 </div>
-              ))}
+              </div>
+              <div className="cal-status" style={{color: googleCal ? 'var(--success)' : 'var(--text-light)'}}>
+                {googleCal ? '✓ Connected' : 'Connect'}
+              </div>
+            </button>
+
+            <button className={`cal-connect-btn ${msCal ? 'connected' : ''}`}
+              onClick={simulateMsAuth}>
+              <div className="cal-icon" style={{background:'#fff', border:'1px solid #ddd'}}>
+                <span style={{fontSize:20}}>🟦</span>
+              </div>
+              <div>
+                <div style={{fontWeight:600}}>Microsoft Calendar</div>
+                <div style={{fontSize:12, color:'var(--text-light)'}}>
+                  {msCal ? 'Connected — busy dates synced' : 'Connect via Microsoft OAuth'}
+                </div>
+              </div>
+              <div className="cal-status" style={{color: msCal ? 'var(--success)' : 'var(--text-light)'}}>
+                {msCal ? '✓ Connected' : 'Connect'}
+              </div>
+            </button>
+
+            <div style={{position:'relative', textAlign:'center', margin:'20px 0'}}>
+              <div style={{position:'absolute', top:'50%', left:0, right:0, height:1, background:'var(--border)'}}></div>
+              <span style={{position:'relative', background:'white', padding:'0 12px', fontSize:12, color:'var(--text-light)'}}>or upload a calendar file</span>
             </div>
-          )}
-          {geo.status === 'success' && geo.city && (
-            <div className="geo-status" style={{background:'#D1FAE5', color:'#065F46'}}>
-              Detected: {geo.city.name}
+
+            <label style={{display:'flex', alignItems:'center', justifyContent:'center', gap:8, padding:14, border:'2px dashed var(--border)', borderRadius:10, cursor:'pointer', color:'var(--text-light)', fontSize:14, transition:'all 0.2s', background: icsFile ? '#F0FDF4' : 'transparent', borderColor: icsFile ? 'var(--success)' : 'var(--border)'}}>
+              <span>{icsFile ? '✓ ' + icsFile : '📎 Upload .ics file'}</span>
+              <input type="file" accept=".ics" onChange={handleIcsUpload} style={{display:'none'}} />
+            </label>
+
+            {busyDates.length > 0 && (
+              <div style={{marginTop:16, padding:12, background:'#D1FAE5', borderRadius:8, fontSize:13, color:'#065F46', textAlign:'center'}}>
+                ✓ {busyDates.length} busy date{busyDates.length !== 1 ? 's' : ''} imported — these will be used when planning meetups.
+              </div>
+            )}
+
+            <div style={{display:'flex', gap:10, marginTop:24}}>
+              <button className="btn btn-ghost" style={{flex:1}} onClick={() => setStep(1)}>
+                ← Back
+              </button>
+              <button className="btn btn-primary" style={{flex:2}} onClick={finish}>
+                {(googleCal || msCal || busyDates.length > 0) ? "Let's Go! →" : "Get Started →"}
+              </button>
             </div>
-          )}
-          {geo.status === 'error' && (
-            <div className="geo-status" style={{background:'#FEE2E2', color:'#991B1B'}}>
-              {geo.error} You can still type your city manually.
-            </div>
-          )}
-        </div>
-        <button className="btn btn-primary" style={{width:'100%'}} onClick={submit} disabled={!name.trim() || !findCityByName(city)}>
-          Get Started
-        </button>
+
+            {!googleCal && !msCal && busyDates.length === 0 && (
+              <button onClick={finish} style={{width:'100%', marginTop:12, background:'none', border:'none', color:'var(--text-light)', fontSize:13, cursor:'pointer', padding:8, textDecoration:'underline'}}>
+                Skip for now — I'll add my calendar later
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
