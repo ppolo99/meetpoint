@@ -1391,6 +1391,31 @@ function NewMeetupWizard({ group, currentUser, onCancel, onAddMeetup }) {
 // MEETUPS TAB (with unanimous acceptance + comments)
 // ============================================================
 function MeetupsTab({ group, currentUser, onUpdateMeetup }) {
+  const [changingLocationFor, setChangingLocationFor] = useState(null);
+  const [newCity, setNewCity] = useState('');
+  const [citySuggestions, setCitySuggestions] = useState([]);
+
+  const isAdmin = group.members.find(m => m.id === currentUser.id)?.role === 'owner';
+  const memberLocations = group.members.filter(m => m.lat && m.lng).map(m => ({ name: m.name, lat: m.lat, lng: m.lng }));
+  const topCities = useMemo(() => suggestMeetingCities(memberLocations, 3), [group.members.length]);
+
+  function handleCitySearch(val) {
+    setNewCity(val);
+    if (val.length > 1) {
+      setCitySuggestions(UK_CITIES.filter(c => c.name.toLowerCase().includes(val.toLowerCase())).slice(0, 5));
+    } else { setCitySuggestions([]); }
+  }
+
+  function confirmLocationChange(meetupId) {
+    const city = findCityByName(newCity);
+    if (!city) return;
+    // Reset votes when location changes, update city and activity
+    onUpdateMeetup(meetupId, { city: city.name, votes: {}, status: 'proposed', activity: null });
+    setChangingLocationFor(null);
+    setNewCity('');
+    setCitySuggestions([]);
+  }
+
   if (group.meetups.length === 0) {
     return (
       <div className="empty-state">
@@ -1410,9 +1435,9 @@ function MeetupsTab({ group, currentUser, onUpdateMeetup }) {
         const pendingCount = totalMembers - acceptCount - declineCount;
         const allAccepted = acceptCount === totalMembers && totalMembers > 0;
         const anyDeclined = declineCount > 0;
+        const majorityDeclined = totalMembers > 1 && declineCount >= Math.ceil(totalMembers / 2);
 
         // Auto-update status based on votes
-        const computedStatus = allAccepted ? 'confirmed' : anyDeclined ? 'has objections' : 'proposed';
         if (m.status !== 'confirmed' && allAccepted) {
           onUpdateMeetup(m.id, { status: 'confirmed' });
         }
@@ -1429,6 +1454,28 @@ function MeetupsTab({ group, currentUser, onUpdateMeetup }) {
               </div>
             )}
 
+            {/* Majority declined — nudge admin to change location */}
+            {majorityDeclined && isAdmin && m.status !== 'confirmed' && (
+              <div style={{background:'linear-gradient(135deg, #FEF3C7, #FDE68A)', border:'2px solid var(--accent)', borderRadius:12, padding:'14px 18px', marginBottom:16, display:'flex', alignItems:'center', gap:12, flexWrap:'wrap'}}>
+                <span style={{fontSize:24}}>⚠️</span>
+                <div style={{flex:1}}>
+                  <div style={{fontWeight:600, color:'#92400E', fontSize:14}}>Over half the group has declined this location</div>
+                  <div style={{fontSize:12, color:'#A16207', marginTop:2}}>{declineCount} of {totalMembers} members voted against {m.city}. Consider choosing a different meeting point.</div>
+                </div>
+                <button className="btn btn-sm btn-warning" onClick={() => { setChangingLocationFor(m.id); setNewCity(''); }}>
+                  Change Location
+                </button>
+              </div>
+            )}
+
+            {/* Minority declined — softer notice for admin */}
+            {anyDeclined && !majorityDeclined && isAdmin && m.status !== 'confirmed' && (
+              <div style={{background:'#FEF3C7', borderRadius:8, padding:'10px 14px', marginBottom:12, display:'flex', alignItems:'center', gap:8, fontSize:13}}>
+                <span>💡</span>
+                <span style={{color:'#92400E'}}>{declineCount} member{declineCount > 1 ? 's have' : ' has'} declined. You can <button onClick={() => { setChangingLocationFor(m.id); setNewCity(''); }} style={{background:'none', border:'none', color:'var(--primary)', fontWeight:600, cursor:'pointer', padding:0, textDecoration:'underline', fontSize:13}}>change the location</button> if needed.</span>
+              </div>
+            )}
+
             <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start'}}>
               <div>
                 <h3 style={{fontSize:18, marginBottom:4}}>📍 {m.city}</h3>
@@ -1436,10 +1483,60 @@ function MeetupsTab({ group, currentUser, onUpdateMeetup }) {
                   {m.suggestedDate ? `${formatDate(m.suggestedDate.start)}${m.duration > 1 ? ` — ${formatDate(m.suggestedDate.end)}` : ''}` : 'No date selected yet'} · {m.duration} day{m.duration>1?'s':''}
                 </div>
               </div>
-              <span className={`badge ${allAccepted?'badge-success':anyDeclined?'badge-danger':'badge-warning'}`}>
-                {allAccepted ? 'confirmed' : anyDeclined ? 'has objections' : `${acceptCount}/${totalMembers} accepted`}
-              </span>
+              <div style={{display:'flex', gap:6, alignItems:'center'}}>
+                {isAdmin && m.status !== 'confirmed' && (
+                  <button className="btn btn-sm btn-ghost" onClick={() => { setChangingLocationFor(changingLocationFor === m.id ? null : m.id); setNewCity(''); }}
+                    title="Change meeting location">
+                    📍 Change
+                  </button>
+                )}
+                <span className={`badge ${allAccepted?'badge-success':anyDeclined?'badge-danger':'badge-warning'}`}>
+                  {allAccepted ? 'confirmed' : anyDeclined ? 'has objections' : `${acceptCount}/${totalMembers} accepted`}
+                </span>
+              </div>
             </div>
+
+            {/* Change location panel (admin only) */}
+            {changingLocationFor === m.id && isAdmin && (
+              <div style={{background:'#EEF2FF', border:'2px solid var(--primary-light)', borderRadius:12, padding:20, marginBottom:16}}>
+                <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12}}>
+                  <strong style={{fontSize:14}}>📍 Choose a new meeting location</strong>
+                  <button className="btn btn-sm btn-ghost" onClick={() => setChangingLocationFor(null)}>✕ Cancel</button>
+                </div>
+                <p style={{fontSize:12, color:'var(--text-light)', marginBottom:12}}>Changing the location will reset all votes so everyone can re-vote on the new city.</p>
+
+                {/* Suggested cities */}
+                <div style={{display:'flex', gap:8, flexWrap:'wrap', marginBottom:12}}>
+                  {topCities.filter(c => c.name !== m.city).map(c => (
+                    <button key={c.name} className={`btn btn-sm ${newCity === c.name ? 'btn-primary' : 'btn-secondary'}`}
+                      onClick={() => { setNewCity(c.name); setCitySuggestions([]); }}>
+                      {c.name} <span style={{fontWeight:400, opacity:0.7}}>({Math.round(c.avgDistFromMembers)} km avg)</span>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Manual city search */}
+                <div style={{position:'relative', marginBottom:12}}>
+                  <input value={newCity} onChange={e => handleCitySearch(e.target.value)}
+                    placeholder="Or search for a city..." style={{fontSize:13}} />
+                  {citySuggestions.length > 0 && (
+                    <div style={{position:'absolute', top:'100%', left:0, right:0, background:'white', border:'1px solid var(--border)', borderRadius:8, zIndex:10, boxShadow:'0 4px 12px rgba(0,0,0,0.1)'}}>
+                      {citySuggestions.map(s => (
+                        <div key={s.name} onClick={() => { setNewCity(s.name); setCitySuggestions([]); }}
+                          style={{padding:'10px 14px', cursor:'pointer', fontSize:13, borderBottom:'1px solid var(--border)'}}>
+                          {s.name}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <button className="btn btn-primary" onClick={() => confirmLocationChange(m.id)}
+                  disabled={!findCityByName(newCity) || newCity === m.city}>
+                  Confirm New Location
+                </button>
+              </div>
+            )}
 
             {/* Map showing members and destination */}
             <MapView
