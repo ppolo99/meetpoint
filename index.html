@@ -1197,6 +1197,9 @@ function GroupScreen({ group, currentUser, onBack, onUpdateGroup, onRemoveMember
 function NewMeetupWizard({ group, currentUser, onCancel, onAddMeetup }) {
   const [step, setStep] = useState(1);
   const [duration, setDuration] = useState(1);
+  const [invitedIds, setInvitedIds] = useState(group.members.map(m => m.id));
+  const [emailInvite, setEmailInvite] = useState('');
+  const [emailInvites, setEmailInvites] = useState([]);
   const [selectedCity, setSelectedCity] = useState(null);
   const [customCity, setCustomCity] = useState('');
   const [selectedDate, setSelectedDate] = useState(null);
@@ -1206,17 +1209,37 @@ function NewMeetupWizard({ group, currentUser, onCancel, onAddMeetup }) {
   const [aiResponse, setAiResponse] = useState('');
   const [loadingAI, setLoadingAI] = useState(false);
 
-  const memberLocations = group.members.filter(m => m.lat && m.lng).map(m => ({ name: m.name, lat: m.lat, lng: m.lng }));
-  const suggestions = useMemo(() => suggestMeetingCities(memberLocations, 3), [group.members.length]);
+  // Only use invited members for location/date calculations
+  const invitedMembers = group.members.filter(m => invitedIds.includes(m.id));
+  const memberLocations = invitedMembers.filter(m => m.lat && m.lng).map(m => ({ name: m.name, lat: m.lat, lng: m.lng, id: m.id, city: m.city }));
+  const suggestions = useMemo(() => suggestMeetingCities(memberLocations, 3), [memberLocations.length]);
 
-  const allBusyDates = group.members.flatMap(m => m.busyDates || []);
+  const allBusyDates = invitedMembers.flatMap(m => m.busyDates || []);
   const dateSuggestions = useMemo(() => suggestDates(allBusyDates, duration, 3), [allBusyDates.length, duration]);
+
+  function toggleInvite(memberId) {
+    if (memberId === currentUser.id) return; // Can't uninvite yourself
+    setInvitedIds(prev => prev.includes(memberId) ? prev.filter(id => id !== memberId) : [...prev, memberId]);
+  }
+
+  function addEmailInvite() {
+    const email = emailInvite.trim().toLowerCase();
+    if (!email || !email.includes('@')) return;
+    if (!emailInvites.includes(email)) {
+      setEmailInvites(prev => [...prev, email]);
+    }
+    setEmailInvite('');
+  }
+
+  function removeEmailInvite(email) {
+    setEmailInvites(prev => prev.filter(e => e !== email));
+  }
 
   function simulateAI() {
     setLoadingAI(true);
     const city = selectedCity || customCity;
     setTimeout(() => {
-      setAiResponse(`Here are some ideas for a ${duration}-day trip to ${city} with ${group.members.length} people:\n\n1. Morning: Start with a walking tour of the city centre — great way to get oriented together.\n\n2. Afternoon: Visit a local museum or gallery (most cities have free options).\n\n3. Evening: Find a well-reviewed restaurant for a group dinner — look for one with a private dining option.\n\n4. If staying overnight: Check out local live music venues or a comedy club.\n\n5. Next day: Consider a day trip to nearby countryside or coast — a change of scenery works well for groups.\n\nTip: Book a central Airbnb or hotel so everyone has a base, and consider creating a shared expenses pot beforehand.`);
+      setAiResponse(`Here are some ideas for a ${duration}-day trip to ${city} with ${invitedMembers.length} people:\n\n1. Morning: Start with a walking tour of the city centre — great way to get oriented together.\n\n2. Afternoon: Visit a local museum or gallery (most cities have free options).\n\n3. Evening: Find a well-reviewed restaurant for a group dinner — look for one with a private dining option.\n\n4. If staying overnight: Check out local live music venues or a comedy club.\n\n5. Next day: Consider a day trip to nearby countryside or coast — a change of scenery works well for groups.\n\nTip: Book a central Airbnb or hotel so everyone has a base, and consider creating a shared expenses pot beforehand.`);
       setLoadingAI(false);
     }, 2000);
   }
@@ -1228,26 +1251,31 @@ function NewMeetupWizard({ group, currentUser, onCancel, onAddMeetup }) {
       suggestedDate: selectedDate,
       activity: selectedActivity,
       aiSuggestions: aiResponse || null,
+      invitedMembers: invitedIds,
+      emailInvites: emailInvites,
+      acceptedMembers: [currentUser.id], // Creator auto-accepts
     });
   }
 
   const cityObj = selectedCity ? UK_CITIES.find(c => c.name === selectedCity) : null;
+  const stepLabels = ['Duration', 'Invite', 'Location', 'Dates', 'Activities'];
 
   return (
     <div>
       <h2 style={{marginBottom:8}}>Plan a Meetup</h2>
       <div className="step-indicator">
-        {[1,2,3,4].map(s => (
+        {[1,2,3,4,5].map(s => (
           <React.Fragment key={s}>
             <div className={`step ${step===s?'active':''} ${step>s?'done':''}`}>
               <div className="step-dot">{step > s ? '✓' : s}</div>
-              <span>{['Duration','Location','Dates','Activities'][s-1]}</span>
+              <span>{stepLabels[s-1]}</span>
             </div>
-            {s < 4 && <div className="step-line" />}
+            {s < 5 && <div className="step-line" />}
           </React.Fragment>
         ))}
       </div>
 
+      {/* STEP 1: Duration */}
       {step === 1 && (
         <div>
           <h3>How long should the meetup be?</h3>
@@ -1265,10 +1293,90 @@ function NewMeetupWizard({ group, currentUser, onCancel, onAddMeetup }) {
         </div>
       )}
 
+      {/* STEP 2: Invite Members */}
       {step === 2 && (
         <div>
+          <h3>Who's coming?</h3>
+          <p style={{color:'var(--text-light)', fontSize:13, marginBottom:16}}>Select group members to invite. Their locations and calendars will be used to find the best meeting point and dates.</p>
+
+          {/* Existing group members */}
+          <div style={{marginBottom:16}}>
+            {group.members.map(m => {
+              const isInvited = invitedIds.includes(m.id);
+              const isYou = m.id === currentUser.id;
+              return (
+                <div key={m.id}
+                  onClick={() => !isYou && toggleInvite(m.id)}
+                  style={{display:'flex', alignItems:'center', gap:12, padding:'10px 14px', borderRadius:10, marginBottom:6,
+                    background: isInvited ? '#EEF2FF' : 'var(--bg)',
+                    border: isInvited ? '2px solid var(--primary-light)' : '2px solid var(--border)',
+                    cursor: isYou ? 'default' : 'pointer', opacity: isInvited ? 1 : 0.5, transition: 'all 0.2s'}}>
+                  <div style={{width:20, height:20, borderRadius:4, border: isInvited ? '2px solid var(--primary)' : '2px solid #CBD5E1', background: isInvited ? 'var(--primary)' : 'white', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0}}>
+                    {isInvited && <span style={{color:'white', fontSize:12, fontWeight:700}}>✓</span>}
+                  </div>
+                  <Avatar user={m} size={32} fontSize={13} />
+                  <div style={{flex:1}}>
+                    <div style={{fontWeight:600, fontSize:13}}>{m.name}{isYou ? ' (you)' : ''}</div>
+                    <div style={{fontSize:11, color:'var(--text-light)'}}>{m.city}</div>
+                  </div>
+                  {isInvited && (
+                    <span className="badge badge-primary" style={{fontSize:10}}>
+                      {isYou ? 'Organiser' : 'Invited'}
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Email invites for people not yet in the group */}
+          <div style={{background:'var(--bg)', borderRadius:10, padding:16, marginBottom:16}}>
+            <strong style={{fontSize:13, display:'block', marginBottom:8}}>Invite someone new via email</strong>
+            <div style={{display:'flex', gap:8}}>
+              <input value={emailInvite} onChange={e => setEmailInvite(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && addEmailInvite()}
+                placeholder="friend@example.com" style={{flex:1, fontSize:13}} type="email" />
+              <button className="btn btn-sm btn-secondary" onClick={addEmailInvite}>+ Add</button>
+            </div>
+            {emailInvites.length > 0 && (
+              <div style={{marginTop:10, display:'flex', flexWrap:'wrap', gap:6}}>
+                {emailInvites.map(email => (
+                  <span key={email} className="member-chip" style={{fontSize:12}}>
+                    ✉️ {email}
+                    <span className="remove" onClick={() => removeEmailInvite(email)}>✕</span>
+                  </span>
+                ))}
+              </div>
+            )}
+            <p style={{fontSize:11, color:'var(--text-light)', marginTop:8}}>They'll receive an invite to join the group. Once they add their location and calendar, the suggested meeting point and dates will automatically update.</p>
+          </div>
+
+          {/* Invite code */}
+          <div style={{background:'var(--bg)', borderRadius:10, padding:16, marginBottom:16, textAlign:'center'}}>
+            <strong style={{fontSize:13}}>Or share the group invite code</strong>
+            <div style={{fontFamily:'monospace', fontSize:18, letterSpacing:2, margin:'8px 0', color:'var(--primary)', fontWeight:700}}>{group.inviteCode}</div>
+          </div>
+
+          <div style={{fontSize:12, color:'var(--text-light)', marginBottom:16}}>
+            {invitedIds.length} member{invitedIds.length !== 1 ? 's' : ''} selected{emailInvites.length > 0 ? ` + ${emailInvites.length} email invite${emailInvites.length !== 1 ? 's' : ''}` : ''}
+          </div>
+
+          <div style={{marginTop:12, display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+            <button className="btn btn-ghost" onClick={() => setStep(1)}>← Back</button>
+            <div style={{display:'flex', gap:8}}>
+              <button className="btn btn-ghost" onClick={() => setStep(3)} style={{fontSize:13}}>Skip to location →</button>
+              <button className="btn btn-primary" onClick={() => setStep(3)} disabled={invitedIds.length < 1}>Next →</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* STEP 3: Location */}
+      {step === 3 && (
+        <div>
           <h3>Where should you meet?</h3>
-          <p style={{color:'var(--text-light)', fontSize:13, marginBottom:16}}>Based on everyone's locations, here are the best central meeting points:</p>
+          <p style={{color:'var(--text-light)', fontSize:13, marginBottom:4}}>Based on {invitedMembers.length} invited member{invitedMembers.length !== 1 ? 's' : ''}'s locations:</p>
+          <p style={{color:'var(--primary)', fontSize:12, marginBottom:16, fontStyle:'italic'}}>This will recalculate as more people accept and share their location.</p>
 
           {/* Interactive map */}
           <MapView
@@ -1297,13 +1405,14 @@ function NewMeetupWizard({ group, currentUser, onCancel, onAddMeetup }) {
             <input value={customCity} onChange={e => { setCustomCity(e.target.value); setSelectedCity(null); }} placeholder="Type any city..." />
           </div>
           <div style={{marginTop:20, display:'flex', justifyContent:'space-between'}}>
-            <button className="btn btn-ghost" onClick={() => setStep(1)}>← Back</button>
-            <button className="btn btn-primary" onClick={() => setStep(3)} disabled={!selectedCity && !customCity.trim()}>Next →</button>
+            <button className="btn btn-ghost" onClick={() => setStep(2)}>← Back</button>
+            <button className="btn btn-primary" onClick={() => setStep(4)} disabled={!selectedCity && !customCity.trim()}>Next →</button>
           </div>
         </div>
       )}
 
-      {step === 3 && (
+      {/* STEP 4: Dates */}
+      {step === 4 && (
         <div>
           <h3>When works for everyone?</h3>
           {allBusyDates.length === 0 ? (
@@ -1311,10 +1420,11 @@ function NewMeetupWizard({ group, currentUser, onCancel, onAddMeetup }) {
               No one has added busy dates yet. Go to the Calendar tab to add yours.
             </div>
           ) : (
-            <p style={{color:'var(--text-light)', fontSize:13, marginBottom:16}}>
-              Based on {group.members.length} members' calendars, here are free windows:
+            <p style={{color:'var(--text-light)', fontSize:13, marginBottom:4}}>
+              Based on {invitedMembers.length} members' calendars, here are free windows:
             </p>
           )}
+          <p style={{color:'var(--primary)', fontSize:12, marginBottom:16, fontStyle:'italic'}}>Dates will recalculate as more people share their availability.</p>
           {dateSuggestions.map(s => (
             <div key={s.key} className={`date-suggestion ${selectedDate?.key === s.key ? 'chosen' : ''}`}
               onClick={() => setSelectedDate(s)} style={{cursor:'pointer'}}>
@@ -1326,13 +1436,14 @@ function NewMeetupWizard({ group, currentUser, onCancel, onAddMeetup }) {
             </div>
           ))}
           <div style={{marginTop:20, display:'flex', justifyContent:'space-between'}}>
-            <button className="btn btn-ghost" onClick={() => setStep(2)}>← Back</button>
-            <button className="btn btn-primary" onClick={() => setStep(4)}>Next →</button>
+            <button className="btn btn-ghost" onClick={() => setStep(3)}>← Back</button>
+            <button className="btn btn-primary" onClick={() => setStep(5)}>Next →</button>
           </div>
         </div>
       )}
 
-      {step === 4 && (
+      {/* STEP 5: Activities */}
+      {step === 5 && (
         <div>
           <h3>Things to do in {selectedCity || customCity}</h3>
           {cityObj && cityObj.activities ? (
@@ -1365,7 +1476,7 @@ function NewMeetupWizard({ group, currentUser, onCancel, onAddMeetup }) {
                   Use an AI assistant to research activities. In production this would connect to an LLM API.
                 </p>
                 <textarea value={aiPrompt} onChange={e => setAiPrompt(e.target.value)}
-                  placeholder={`e.g. "Suggest fun group activities in ${selectedCity || customCity} for ${group.members.length} people over ${duration} days"`}
+                  placeholder={`e.g. "Suggest fun group activities in ${selectedCity || customCity} for ${invitedMembers.length} people over ${duration} days"`}
                   style={{minHeight:60, marginBottom:8}} />
                 <button className="btn btn-sm btn-warning" onClick={simulateAI} disabled={loadingAI}>
                   {loadingAI ? 'Thinking...' : '✨ Generate Suggestions'}
@@ -1378,7 +1489,7 @@ function NewMeetupWizard({ group, currentUser, onCancel, onAddMeetup }) {
           </div>
 
           <div style={{marginTop:20, display:'flex', justifyContent:'space-between'}}>
-            <button className="btn btn-ghost" onClick={() => setStep(3)}>← Back</button>
+            <button className="btn btn-ghost" onClick={() => setStep(4)}>← Back</button>
             <button className="btn btn-success" onClick={handleFinish}>✓ Create Meetup Proposal</button>
           </div>
         </div>
@@ -1538,6 +1649,65 @@ function MeetupsTab({ group, currentUser, onUpdateMeetup }) {
               </div>
             )}
 
+            {/* Invited members status */}
+            {m.invitedMembers && m.invitedMembers.length > 0 && (() => {
+              const invited = m.invitedMembers || [];
+              const accepted = m.acceptedMembers || [];
+              const invitedMemberObjects = group.members.filter(mem => invited.includes(mem.id));
+              const pendingInvites = invited.filter(id => !accepted.includes(id));
+
+              // Recalculation: compute best city based on accepted members' locations
+              const acceptedLocations = group.members.filter(mem => accepted.includes(mem.id) && mem.lat && mem.lng);
+              const recalcCities = acceptedLocations.length >= 2 ? suggestMeetingCities(acceptedLocations.map(m => ({name: m.name, lat: m.lat, lng: m.lng})), 1) : [];
+              const suggestedNewCity = recalcCities.length > 0 ? recalcCities[0].name : null;
+              const cityMismatch = suggestedNewCity && suggestedNewCity !== m.city && isAdmin && m.status !== 'confirmed';
+
+              return (
+                <div style={{marginBottom:16}}>
+                  {/* Member invite chips */}
+                  <div style={{display:'flex', flexWrap:'wrap', gap:6, marginBottom:8}}>
+                    {invitedMemberObjects.map(mem => {
+                      const hasAccepted = accepted.includes(mem.id);
+                      return (
+                        <div key={mem.id} style={{display:'flex', alignItems:'center', gap:6, padding:'4px 10px 4px 4px', borderRadius:20, fontSize:12, background: hasAccepted ? '#D1FAE5' : 'var(--bg)', border: hasAccepted ? '1px solid var(--success)' : '1px solid var(--border)', opacity: hasAccepted ? 1 : 0.6}}>
+                          <Avatar user={mem} size={22} fontSize={9} />
+                          <span style={{fontWeight:500}}>{mem.name}</span>
+                          <span style={{fontSize:10, color: hasAccepted ? '#065F46' : 'var(--text-light)'}}>
+                            {hasAccepted ? '✓ joined' : 'pending'}
+                          </span>
+                        </div>
+                      );
+                    })}
+                    {(m.emailInvites || []).map(email => (
+                      <div key={email} style={{display:'flex', alignItems:'center', gap:6, padding:'4px 10px', borderRadius:20, fontSize:12, background:'var(--bg)', border:'1px solid var(--border)', opacity:0.6}}>
+                        ✉️ <span>{email}</span>
+                        <span style={{fontSize:10, color:'var(--text-light)'}}>invited</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Recalculation suggestion */}
+                  {cityMismatch && (
+                    <div style={{background:'#EEF2FF', border:'1px solid var(--primary-light)', borderRadius:10, padding:'10px 14px', fontSize:13, display:'flex', alignItems:'center', gap:8, flexWrap:'wrap'}}>
+                      <span style={{fontSize:16}}>🔄</span>
+                      <span style={{flex:1}}>Based on who's joined so far, <strong>{suggestedNewCity}</strong> may be a better central meeting point than {m.city}.</span>
+                      <button className="btn btn-sm btn-secondary" onClick={() => {
+                        onUpdateMeetup(m.id, { city: suggestedNewCity, votes: {}, status: 'proposed', activity: null });
+                      }}>
+                        Switch to {suggestedNewCity}
+                      </button>
+                    </div>
+                  )}
+
+                  {pendingInvites.length > 0 && !cityMismatch && (
+                    <p style={{fontSize:11, color:'var(--text-light)', fontStyle:'italic'}}>
+                      Waiting for {pendingInvites.length} more member{pendingInvites.length !== 1 ? 's' : ''} to join — location and dates may update.
+                    </p>
+                  )}
+                </div>
+              );
+            })()}
+
             {/* Map showing members and destination */}
             <MapView
               members={group.members.filter(mem => mem.lat && mem.lng)}
@@ -1679,7 +1849,18 @@ function VoteButton({ meetup, userId, vote, label, onUpdateMeetup }) {
   return (
     <button className={`btn btn-sm ${cls}`} onClick={() => {
       const newVotes = { ...meetup.votes, [userId]: isActive ? undefined : vote };
-      onUpdateMeetup(meetup.id, { votes: newVotes });
+      const updates = { votes: newVotes };
+      // Track accepted members for recalculation
+      if (vote === 'accept' && !isActive) {
+        const accepted = meetup.acceptedMembers || [];
+        if (!accepted.includes(userId)) {
+          updates.acceptedMembers = [...accepted, userId];
+        }
+      } else if (vote === 'accept' && isActive) {
+        // Removing accept vote
+        updates.acceptedMembers = (meetup.acceptedMembers || []).filter(id => id !== userId);
+      }
+      onUpdateMeetup(meetup.id, updates);
     }}>
       {label}
     </button>
